@@ -1,6 +1,6 @@
 <%doc>
 
-=head1 edit
+=head2 edit
 
 This is the edit page. It edits the passed-in object, by displaying a
 form similar to L<add_new> but with the current values filled in.
@@ -39,6 +39,5 @@ form similar to L<add_new> but with the current values filled in.
 <tr><td></td><td><input class="MPButton" type="submit" name="edit" value="save" /></td></tr>
 </table>
 % }
-
 
 </form>

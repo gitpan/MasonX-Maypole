@@ -1,6 +1,6 @@
 <%doc>
 
-=head1 addnew
+=head2 addnew
 
 This is the interface to adding a new instance of an object. (or a new
 row in the database, if you want to look at it that way). It displays a
@@ -21,7 +21,6 @@ table.
 
 <input type="hidden" name="action" value="create" />
 
-
 <table class="Maypole">
 
 % foreach my $col ( @{ $classmetadata->{ columns } } ) {
@@ -36,7 +35,4 @@ table.
 
 </table>
 
-
-
 </form>
-

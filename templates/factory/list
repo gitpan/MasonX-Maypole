@@ -1,3 +1,13 @@
+<%doc>
+
+=head2 list
+
+List all items in a table, or all items returned by a search, paged if
+necessary.
+
+=cut
+
+</%doc>
 <%args>
     @objects
     $classmetadata
@@ -54,4 +64,3 @@
 <div id="MPAddNewContainer"><& addnew, %ARGS &></div>
 
 </div>
-

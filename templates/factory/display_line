@@ -9,6 +9,10 @@ column. It misses out the C<id> column by default.
 =cut
 
 </%doc>
+<%args>
+    $item
+    $classmetadata
+</%args>
 
 % foreach my $col ( @{ $classmetadata->{ columns } } ) {
 % next if $col eq 'id';
@@ -23,9 +27,3 @@ column. It misses out the C<id> column by default.
 
 <td><& button, %ARGS, action => 'edit'   &></td>
 <td><& button, %ARGS, action => 'delete' &></td>
-
-
-<%args>
-    $item
-    $classmetadata
-</%args>

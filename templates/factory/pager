@@ -1,12 +1,21 @@
 <%doc>
 
-=head1 pager
+=head2 pager
 
 This controls the pager display at the bottom (by default) of the list
 and search views. It expects a C<pager> template argument which responds
 to the L<Data::Page> interface.
 
+=cut
+
 </%doc>
+<%args>
+    $request
+    $config
+    $base
+    $pager
+    $classmetadata
+</%args>
 
 %if ( $pager && $pager->{ first_page } != $pager->{ last_page } ) {
 <p align="center">Pages: 
@@ -27,10 +36,3 @@ to the L<Data::Page> interface.
 % } # / if
 </p>
 
-<%args>
-    $request
-    $config
-    $base
-    $pager
-    $classmetadata
-</%args>

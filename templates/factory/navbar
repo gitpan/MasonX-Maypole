@@ -1,12 +1,19 @@
 <%doc>
 
-=head1 navbar 
+=head2 navbar 
 
 This is a navigation bar to go across the page. (Or down the side, or
 whatever you want to do with it.) It displays all the tables which are
 accessible, with a link to the list page for each one.
 
+=cut
+
 </%doc>
+<%args>
+    $config
+    $base
+    $request
+</%args>
 
 <div id="MPNavContainer">
 <ul id="MPNav">
@@ -22,9 +29,3 @@ accessible, with a link to the list page for each one.
 </ul>
 <br style="clear: both" />
 </div>
-
-<%args>
-    $config
-    $base
-    $request
-</%args>

@@ -6,6 +6,7 @@ Provide a Mason frontend to Maypole.
 This module removes most of the 'view' processing from the Maypole request
 cycle, leaving all that to Mason. 
 
+VERSION 0.04 POD updates
 VERSION 0.03 update maypole.css, templates fully XHTMLized
 VERSION 0.02 fix POD typos, add maypole.css
 
@@ -21,6 +22,7 @@ To install this module type the following:
 DEPENDENCIES
 
 Mason and Maypole
+HTML::Element (for the pager template)
 
 COPYRIGHT AND LICENCE
 

@@ -2,7 +2,7 @@
 
 =head2 mplink
 
-This creates an <a href="... to a command in the Maypole app by
+This creates a link to a command in the Maypole app by
 catenating the base URL, table, command, and any arguments.
 
 Note that the format of these links should match that parsed by the

@@ -1,8 +1,8 @@
 <%doc>
 
-=for doc
+=head2 view
 
-The C<view> template takes some objects (usually just one) from
+Takes some objects (usually just one) from
 C<objects> and displays the object's properties in a table. 
 
 It gets the displayable form of a column's name from the hash returned
@@ -54,4 +54,3 @@ displays the results in a table.
 </table>
 
 % }
-

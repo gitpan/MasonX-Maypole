@@ -1,4 +1,5 @@
 <%doc>
+
 =head2 button
 
 This is a generic button, which performs an action on an object.
@@ -6,14 +7,12 @@ This is a generic button, which performs an action on an object.
 =cut
 
 </%doc>
-
-<form class="MPButton" method="post" action="/<% $base %>/<% $item->table %>/<% $action %>/<% $item->id %>.html">
-<input type="submit" name="<% $action %>" value="<% $action %>" />
-</form>
-
 <%args>
-    $config
     $base
     $item
     $action
 </%args>
+
+<form class="MPButton" method="post" action="/<% $base %>/<% $item->table %>/<% $action %>/<% $item->id %>.html">
+<input type="submit" name="<% $action %>" value="<% $action %>" />
+</form>

@@ -7,7 +7,7 @@ use base 'Maypole';
 use Maypole::Constants; 
 use HTML::Mason::Request;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 NAME
 
@@ -39,6 +39,10 @@ In beerdb/dhandler:
     
 In the Mason handler.pl script:
 
+    # loading BeerDB.pm could instead go in the autohandler,
+    # or else in httpd.conf (PerlModule BeerDB)
+    use BeerDB; 
+    
     my $ah = HTML::Mason::ApacheHandler->new(
                 comp_root => [ [ main    => $main_comp_root ], # for the rest of your website
                                [ beerdb  => '/path/to/beerdb' ],
@@ -48,7 +52,7 @@ In the Mason handler.pl script:
                 ...
                 
                 # continue along
-
+                
 =cut
 
 =begin comment
@@ -71,7 +75,7 @@ cycle, leaving all that to Mason.
 
 =head2 Templates
 
-The templates provided are (not quite) XHTMLized, Mason-ized versions of the
+The templates provided are XHTMLized, Mason-ized versions of the
 standard Maypole factory templates. A basic CSS file is included.
 
 The C<link> template has been renamed C<mplink> because you may already have a
@@ -84,10 +88,23 @@ I do.
 
 The L<Maypole::View::TT> way of working is to inject the template variables
 into the namespace of each template. For Mason users, this would be similar to
-defining the variables as request globals. Instead, for simplicity, in the setup
-shown above the template variables are retrieved by the root autohandler and
-placed in the %ARGS hash. This means that the template vars have to be passed
-around manually between components.
+defining the variables as request globals, and you could do that if you prefer.
+However, for simplicity, in the setup shown above the template variables are
+retrieved by the root autohandler and placed in the %ARGS hash. This means that
+the template vars have to be passed around manually between components.
+
+Mason doesn't differentiate between URL args (i.e. the query) and POSTed
+content. Query parameters and POSTed data can be accessed directly in the
+Mason components. This is different from standard Maypole, where query
+arguments are stored in the Maypole request (C<$request->{query}>)
+and POSTed arguments are available in C<$request->{params}>.
+
+So in the Mason templates, you can access submitted data directly by name, via
+%ARGS, or via the Maypole template variables which are added to %ARGS in the
+autohandler. These include the Maypole request, so finally you can get at the
+submitted data through C<$ARGS{ request }->{ params }> (or C<$request->{ params }>
+if you specify C<$request> in the Mason C<%args> block). C<$request->{ query }>
+will always be empty. 
 
 =item template paths
 
@@ -288,8 +305,6 @@ sub parse_location {
         $self->{params}{$key} = '' unless defined $value;
     }
     
-    # Mason doesn't differentiate between URL args and POSTed content.
-    # Query parameters can be accessed directly in the Mason components. 
     $self->{query}  = {}; # { $self->{ar}->args };
 }
 
@@ -301,14 +316,17 @@ sub parse_location {
 
 1;
 
+=head1 DEPENDENCIES
+
+Mason and Maypole.
+
+L<HTML::Element> is used in the C<search> template, but is not a dependency of
+L<MasonX::Maypole> per se. 
+
 =head1 BUGS
 
 Please report all bugs via the CPAN Request Tracker at
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=MasonX-Maypole>.
-
-=head1 TODO
-
-Complete XHTMLization of templates. 
 
 =head1 COPYRIGHT AND LICENSE
 
