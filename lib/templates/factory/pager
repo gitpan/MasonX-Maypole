@@ -31,22 +31,22 @@ to the L<Data::Page> interface.
         {
             my $args = "?page=$num";
 
-            $args .= "&order=" . $request->query->{order} if $request->query->{order};
+            $args .= "&order=" . $request->params->{order} if $request->params->{order};
 
-            $args .= "&o2=desc" if $request->query->{o2} eq "desc";
+            $args .= "&o2=desc" if $request->params->{o2} eq "desc";
 
             my $action = "list";
 
             foreach my $col ( @{ $classmetadata->{columns} } )
             {
-                if ( $request->query->{ $col } )
+                if ( $request->params->{ $col } )
                 {
-                    $args .= "&$col=" . $request->query->{ $col };
+                    $args .= "&$col=" . $request->params->{ $col };
                     $action = "search";
                 }
             }
 </%perl>
-<& link, table      => $classmetadata->table,
+<& link, table      => $classmetadata->{table},
          command    => $action,
          additional => $args,
          label      => $num &>

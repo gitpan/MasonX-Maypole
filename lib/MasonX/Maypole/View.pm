@@ -43,7 +43,7 @@ sub template {
 
             # XXX need to check how this plays in mod_perl2. It may be
             # unnecessary anyway.
-            $maypole->ar->register_cleanup( sub { undef $export } );
+            $maypole->ar->register_cleanup( sub { undef *$export } );
 
             # no strict 'refs';
             # *{"$pkg\::$varname"} = \$vars{ $varname };
@@ -52,7 +52,7 @@ sub template {
 
     if ( my $error = $@ )
     {
-        $maypole->error( $error );
+        $maypole->error( 'Error populating template vars: ' . $error );
         return ERROR;
     }
 

@@ -2,6 +2,10 @@ Revision history for MasonX-Maypole
 
 Change log
 ==========
+
+0.215  Wed Dec 15, 15:00:00 2004
+    - fixed bug in pager template
+
 0.213  Thu Dec 9, 01:15:00 2004
     - applied patch to view template, splitting part of it out into the
         new view_item template
