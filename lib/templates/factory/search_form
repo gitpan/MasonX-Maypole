@@ -16,7 +16,7 @@
 <%perl>
     my $element = $classmetadata->{cgi}->{ $col };
 
-    if ( $element->{tag} eq "select" )
+    if ( $element->tag eq "select" )
     {
         $element = $element->unshift_content(
                             HTML::Element->new( "option", value => " " ) );

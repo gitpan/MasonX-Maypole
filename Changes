@@ -3,6 +3,9 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.218  Tues Feb 15, 15:40:00 2005
+    - fixed bug in search_form template ($element->{tag} should be $element->tag)
+
 0.217  Fri  Feb 11, 11:55:00 2005
     - fixed links in frontpage template 
 

@@ -28,13 +28,13 @@ Loads the Maypole template vars into Mason components' namespace.
 
 sub template {
     my ( $self, $maypole ) = @_;
-
+    
     eval {
         my $pkg = $maypole->config->masonx->{in_package};
 
         my %vars = $self->vars( $maypole );
 
-        warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 1;
+        warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 2;
 
         foreach my $varname ( keys %vars )
         {
@@ -68,7 +68,7 @@ templates) to the browser.
 
 sub error {
     my ( $self, $maypole, $error ) = @_;
-
+    
     # Some parts of Maypole will store the error in the Maypole request 'error' slot
     # (e.g. see above). Others pass the error as an argument (e.g. Maypole::handler_guts)
     my %errors;
