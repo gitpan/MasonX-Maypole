@@ -21,11 +21,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.0218
+Version 0.0219
 
 =cut
 
-our $VERSION = '0.218';
+our $VERSION = '0.219';
 
 =head1 SYNOPSIS
 
@@ -257,11 +257,21 @@ sub send_output {
     );
 
     # add dynamic comp root for table queries
-    if ( $self->table )
+    # Changed to using model_class instead of table in 0.219 ( see Maypole::View::Base::paths() 
+    # - ideally, this stuff would go in a paths() method).
+    if ( $self->model_class )
     {
-        my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->table );
-        $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
+        my $model_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
+        # Even with this ugliness, there might be potential for non-unique prefixes, if a site was 
+        # running multiple Maypole sub-apps all using the same Mason datadir...
+        $m->prefix_comp_root( 'MAYPOLE_MODEL_' . $self->model_class->moniker . "=>$model_comp_root" ) if -d $model_comp_root;
     }
+    
+    #if ( $self->table )
+    #{
+    #    my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->table );
+    #    $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
+    #}
     
     warn "Comp roots: \n" . YAML::Dump( $m->interp->comp_root ) if $self->debug;
 

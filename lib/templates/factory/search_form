@@ -19,7 +19,7 @@
     if ( $element->tag eq "select" )
     {
         $element = $element->unshift_content(
-                            HTML::Element->new( "option", value => " " ) );
+                            HTML::Element->new( "option", value => '' ) );
     }
 </%perl>
 <% $element->as_XML %><br clear="left" />

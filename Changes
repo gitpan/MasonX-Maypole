@@ -3,6 +3,14 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.219  Sun Feb 20, 18:03:00 2005
+    - changed send_output() to add a component root based on the model moniker, rather 
+        than the table name. In most cases these will be identical. 
+    - fixed a bug where all custom component roots were compiled in the same subdirectory 
+        of the Mason data dir, thus breaking the ability of different versions of the 
+        same template to be called for different tables (mreece). Can't figure out why 
+        this never affected me, since it's pretty fundamental to the whole thing. 
+
 0.218  Tues Feb 15, 15:40:00 2005
     - fixed bug in search_form template ($element->{tag} should be $element->tag)
 
