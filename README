@@ -1,37 +1,48 @@
-MasonX/Maypole version 0.03
-===========================
- 
-Provide a Mason frontend to Maypole.
+MasonX-Maypole
 
-This module removes most of the 'view' processing from the Maypole request
-cycle, leaving all that to Mason. 
+Provides a Mason frontend and view to Maypole 2.
 
-VERSION 0.04 POD updates
-VERSION 0.03 update maypole.css, templates fully XHTMLized
-VERSION 0.02 fix POD typos, add maypole.css
+Change log
+==========
+
+0.2_01 Thu Nov 12, 17:30:00 2004
+    - initial developer release with Maypole 2 support
+    - completely rebuilt to support Maypole 2
+    - new templates and css brought in from Maypole 2
+    - uses Module::Build for distribution
+    - now includes a view component (MasonX::Maypole::View)
+    - templates search path matches that in the main Maypole documentation
+    - ditto for path parsing
+
+0.04  Thu Aug 19 11:05:00 2004
+    - POD updates
+
+0.03  Fri Aug  6 09:45:00 2004
+    - minor additions to maypole.css
+    - completed XHTMLisation of templates
+
+0.02  Sun Aug  1 23:29:58 2004
+    - added missing CSS file, fixed typos in POD
+
+0.01  Sun Aug  1 15:30:53 2004
+	- original version; created by h2xs 1.21 with options
+		-XAn MasonX::Maypole
+
+
 
 INSTALLATION
 
-To install this module type the following:
+To install this module, run the following commands:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build install
 
-DEPENDENCIES
-
-Mason and Maypole
-HTML::Element (for the pager template)
 
 COPYRIGHT AND LICENCE
 
-Copyright 2004 by David Baird.
+Copyright (C) 2004 David Baird
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
-
-Most of the code in this module is taken from Apache::MVC and Maypole.pm,
-by Simon Cozens. 
-
-

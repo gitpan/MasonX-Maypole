@@ -1,0 +1,23 @@
+--- #YAML:1.0
+name: MasonX-Maypole
+version: 0.2_01
+author:
+  - David Baird <cpan@riverside-cms.co.uk>
+abstract: |-
+  use Mason as the frontend and view for Maypole version 2
+license: perl
+requires:
+  HTML::Mason: 1
+  Maypole: 2
+  Symbol: 0
+  Test::More: 0
+provides:
+  MasonX::Maypole:
+    file: lib/MasonX/Maypole.pm
+    version: 0.2_01
+  MasonX::Maypole::ApacheHandler:
+    file: lib/MasonX/Maypole.pm
+    version: 0.2_01
+  MasonX::Maypole::View:
+    file: lib/MasonX/Maypole/View.pm
+generated_by: Module::Build version 0.26

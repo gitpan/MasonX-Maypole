@@ -1,16 +1,3 @@
-Revision history for Perl extension MasonX::Maypole.
+Revision history for MasonX-Maypole
 
-0.04  Thu Aug 19 11:05:00 2004
-    - POD updates
- 
-0.03  Fri Aug  6 09:45:00 2004
-    - minor additions to maypole.css
-    - completed XHTMLisation of templates
-
-0.02  Sun Aug  1 23:29:58 2004
-    - added missing CSS file, fixed typos in POD
-
-0.01  Sun Aug  1 15:30:53 2004
-	- original version; created by h2xs 1.21 with options
-		-XAn MasonX::Maypole
-
+See README file.

@@ -1,0 +1,36 @@
+<%doc>
+
+=head1 search_form
+
+=cut
+
+</%doc>
+
+<div id="search">
+<form method="get" action="<% $base %>/<% $classmetadata->{moniker} %>/search/">
+<fieldset>
+<legend>Search</legend>
+% foreach my $col ( @{ $classmetadata->{columns} } ) {
+% next if $col eq "id";
+<label>
+<span class="field"><% $classmetadata->{colnames}->{ $col } %></span>
+<%perl>
+    my $element = $classmetadata->{cgi}->{ $col };
+
+    if ( $element->{tag} eq "select" )
+    {
+        $element = $element->unshift_content(
+                            HTML::Element->new( "option", value => " " ) );
+    }
+</%perl>
+<% $element->as_XML %>
+</label>
+% }
+<input type="submit" name="search" value="search" />
+</fieldset>
+</form>
+</div>
+
+<%once>
+    use HTML::Element;
+</%once>
