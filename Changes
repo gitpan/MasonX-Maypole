@@ -3,6 +3,9 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.217  Fri  Feb 11, 11:55:00 2005
+    - fixed links in frontpage template 
+
 0.216  Thur Feb 10, 22:30:00 2005
     - added Makefile.PL (was just Build.PL before)
     - fixed typo in synopsis (mreece)

@@ -21,11 +21,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.0216
+Version 0.0217
 
 =cut
 
-our $VERSION = '0.216';
+our $VERSION = '0.217';
 
 =head1 SYNOPSIS
 
