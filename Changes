@@ -2,6 +2,9 @@ Revision history for MasonX-Maypole
 
 Change log
 ==========
+0.212  Wed Dec 8, 13:15:00 2004
+    - applied patch to button template, to check if action is_public
+
 0.211  Tue Dec 7, 17:30:00 2004
     - applied patch to maybe_link_view template (the UNIVERSAL::isa check)
 
