@@ -9,6 +9,7 @@ use Apache::MVC 2;
 use base 'Apache::MVC';
 
 Maypole::Config->mk_accessors( 'masonx' );
+__PACKAGE__->config->masonx( {} );
 
 __PACKAGE__->mk_classdata( 'mason_ah' );
 
@@ -20,11 +21,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.02_05
+Version 0.0216
 
 =cut
 
-our $VERSION = '0.215';
+our $VERSION = '0.216';
 
 =head1 SYNOPSIS
 
@@ -45,7 +46,7 @@ our $VERSION = '0.215';
     BeerDB->config->{rows_per_page}  = 10;
     BeerDB->config->{display_tables} = [ qw( beer brewery pub style ) ];
 
-    BeerDB->config->masonx->{comp_root}  = [ factory => '/var/www/maypole/factory' ];
+    BeerDB->config->masonx->{comp_root}  = [ [ factory => '/var/www/maypole/factory' ] ];
     BeerDB->config->masonx->{data_dir}   = '/path/to/mason/data_dir';
     BeerDB->config->masonx->{in_package} = 'My::Mason::App';
 
@@ -66,15 +67,14 @@ our $VERSION = '0.215';
 
     1;
 
-=head1 DEVELOPER RELEASE
-
-This release is fundamentally different from previous MasonX::Maypole releases,
-and B<will break sites> that are using them. Previous releases did not work
-with Maypole 2. This and future releases will not work with Maypole 1.
-
 =head1 DESCRIPTION
 
 A frontend and view for Maypole 2, using Mason.
+
+=head1 EXAMPLES
+
+Example C<BeerDB.pm> and a C<httpd.conf> VirtualHost setup are included in 
+the C</doc> directory of the distribution.
 
 =head1 CONFIGURING MASON
 
@@ -222,7 +222,7 @@ class if you need it:
 =item send_output
 
 Template variables have already been exported to Mason components namespace
-in C<MasonX::Maypole::View::template>. This method now runs the Mason Cexec>
+in C<MasonX::Maypole::View::template>. This method now runs the Mason C<exec>
 phase to generate and send output.
 
 =cut
@@ -262,6 +262,8 @@ sub send_output {
         my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->table );
         $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
     }
+    
+    warn "Comp roots: \n" . YAML::Dump( $m->interp->comp_root ) if $self->debug;
 
     # now generate output
     $m->exec;

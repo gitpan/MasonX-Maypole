@@ -30,4 +30,5 @@ lib/templates/factory/view_item
 lib/templates/factory/view_related
 lib/templates/maypole.css
 doc/maypole_api.txt
+doc/BeerDB.pm
 t/pod.t

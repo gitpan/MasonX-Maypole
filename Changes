@@ -3,6 +3,11 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.216  Thur Feb 10, 22:30:00 2005
+    - added Makefile.PL (was just Build.PL before)
+    - fixed typo in synopsis (mreece)
+    - fixed bug caused by not initialising the masonx config slot (mreece)
+
 0.215  Wed Dec 15, 15:00:00 2004
     - fixed bug in pager template
 
