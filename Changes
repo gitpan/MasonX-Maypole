@@ -2,6 +2,8 @@ Revision history for MasonX-Maypole
 
 Change log
 ==========
+0.211  Tue Dec 7, 17:30:00 2004
+    - applied patch to maybe_link_view template (the UNIVERSAL::isa check)
 
 0.21   Tue Dec 7, 14:00:00 2004
     - removed some bad POD from templates section
