@@ -24,7 +24,7 @@ Version 0.02
 
 =cut
 
-our $VERSION = '0.2_01';
+our $VERSION = '0.2_02';
 
 =head1 SYNOPSIS
 
@@ -81,6 +81,13 @@ A frontend and view for Maypole 2, using Mason.
 Set any parameters for the Mason ApacheHandler in C<My::Maypole::App->config->{masonx}>.
 This is where to tell Maypole/Mason where the factory templates are stored.
 
+Note that the user the server runs as must have permission to read the files in the
+factory templates directory, which also means all directories in the path to the
+templates must be readable and executable (i.e. openable). If Mason can't read
+these templates, you may get a cryptic 'file doesn't exist' error, but you
+will not get a 'not permitted' error.
+
+
 =head1 TEMPLATES
 
 This distribution includes Masonized versions of the standard Maypole templates,
@@ -104,8 +111,10 @@ the thing should Just Work right out of the box.
 
 =item init
 
-This method is called by Maypole during startup. Sets up the Mason
-ApacheHandler.
+This method is called by Maypole while processing the first request the server
+receives. Probably better under mod_perl to call this explicitly at the end of
+your setup code (C<BeerDB-E<gt>init>) to share memory among Apache children.
+Sets up the Mason ApacheHandler, including the search path behaviour.
 
 =cut
 
@@ -114,20 +123,51 @@ ApacheHandler.
 sub init {
     my ( $class ) = @_;
 
-    warn "initialising $class" if $class->debug;
+    $class->set_mason_comp_roots;
 
-    my $config    = $class->config;
-    my $mason_cfg = $config->masonx;
+    my $mason_cfg = $class->config->masonx;
 
-    warn( "starting Mason config: " . YAML::Dump( $mason_cfg ) )
-        if $class->debug;
+    $mason_cfg->{decline_dirs} ||= 0;
+    $mason_cfg->{in_package}   ||= 'HTML::Mason::Commands';
 
-    my $template_root = $config->template_root ||
-        die 'must specify template_root in config';
+    # this provides dynamic table-name component roots
+    $mason_cfg->{request_class}  = 'MasonX::Request::ExtendedCompRoot';
+    $mason_cfg->{resolver_class} = 'MasonX::Resolver::ExtendedCompRoot';
 
-    my $comp_roots = $mason_cfg->{comp_root} || [];
+    $class->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
 
-    my $factory;
+    $class->SUPER::init;
+}
+
+=item set_mason_comp_roots
+
+The default search path for a component is:
+
+    /template_root/<table_moniker>/<component>  # if querying a table
+    /template_root/custom/<component>
+    /template_root/<component>
+    /factory/template/root/<component>
+
+where C</factory/template/root> defaults to C</template_root/factory>, but can
+be altered by providing a factory C<comp_root> to the masonx config as shown
+in the synopsis.
+
+You can provide extra component roots in the masonx config setup. For other
+modifications to the search path, make a subclass that overrides this method.
+
+=cut
+
+# note that the table-name search path is added to the front of this list at
+# the start of every request, in send_output
+sub set_mason_comp_roots {
+    my ( $class ) = @_;
+
+    my $template_root = $class->get_template_root;
+
+    my $comp_roots = $class->config->masonx->{comp_root} || [];
+
+    my $factory = [];
+
 CROOT:  foreach my $index ( 0 .. $#$comp_roots )
     {
         if ( $comp_roots->[ $index ][0] eq 'factory' )
@@ -137,21 +177,11 @@ CROOT:  foreach my $index ( 0 .. $#$comp_roots )
         }
     }
 
-    push @$comp_roots, [ tables  => File::Spec->catdir( $template_root, 'tables' ) ];
     push @$comp_roots, [ custom  => File::Spec->catdir( $template_root, 'custom' ) ];
     push @$comp_roots, [ maypole => $template_root ];
     push @$comp_roots, [ factory => $factory->[1] || File::Spec->catdir( $template_root, 'factory' ) ];
 
-    $mason_cfg->{comp_root} = $comp_roots;
-
-    $mason_cfg->{decline_dirs} = 0                       unless $mason_cfg->{decline_dirs};
-    $mason_cfg->{in_package}   = 'HTML::Mason::Commands' unless $mason_cfg->{in_package};
-
-    warn( "final Mason config: " . YAML::Dump( $mason_cfg ) ) if $class->debug;
-
-    $class->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
-
-    $class->SUPER::init;
+    $class->config->masonx->{comp_root} = $comp_roots;
 }
 
 =item parse_args
@@ -171,6 +201,31 @@ sub parse_args {
     $self->{query}  = $args;
 }
 
+=item parse_location
+
+This method is B<not> implemented here, but in L<Apache::MVC|Apache::MVC>.
+However, the method there assumes your Maypole app is configured in its
+own C<Location> directive in the Apache config file. Here's a method that
+instead uses the C<base_url> Maypole config parameter. Put it in your Maypole
+class if you need it:
+
+    sub parse_location {
+        my ( $self ) = @_;
+
+        my $uri = $self->ar->uri;
+
+        # Apache::MVC uses $self->ar->location here
+        my $base = $self->config->uri_base;
+
+        ( my $path = $uri ) =~ s/^($base)?\///;
+
+        $self->path( $path );
+
+        $self->parse_path;
+        $self->parse_args;
+    }
+
+
 =item send_output
 
 Template variables have already been exported to Mason components namespace
@@ -181,6 +236,8 @@ phase to generate and send output.
 
 sub send_output {
     my ( $self ) = @_;
+
+    warn "config: " . YAML::Dump( $self->config );
 
     # if there was an error, there may already be a report in the output slot,
     # so send it via Apache::MVC
@@ -198,16 +255,40 @@ sub send_output {
         return;
     }
 
+    unless ( ref $m )
+    {
+        $self->output( "prepare_request returned this: [$m]\n instead of a Mason request object" );
+        $self->SUPER::send_output;
+        return;
+    }
+
     $self->ar->content_type(
           $self->content_type =~ m/^text/
         ? $self->content_type . "; charset=" . $self->document_encoding
         : $self->content_type
     );
 
+    # add dynamic comp root for table queries
+    if ( $self->model_class )
+    {
+        my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
+        $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
+    }
+
     # now generate output
     $m->exec;
 }
 
+=item get_template_root
+
+Concatenates template_root and uri_base from the Maypole config.
+
+This is a variation from L<Apache::MVC|Apache::MVC>, which concatenates
+document_root and location from the Apache request server config.
+
+=cut
+
+sub get_template_root { $_[0]->config->template_root }
 
 {
     # copied from MasonX::WebApp

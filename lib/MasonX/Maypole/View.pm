@@ -29,8 +29,6 @@ Loads the Maypole template vars into Mason components' namespace.
 sub template {
     my ( $self, $maypole ) = @_;
 
-    warn 'Mason cfg - ' . YAML::Dump( $maypole->config->masonx ) if $maypole->debug;
-
     eval {
         my $pkg = $maypole->config->masonx->{in_package};
 

@@ -1,14 +1,14 @@
 html {
     padding-right: 0px;
-    padding-left: 0px; 
-    padding-bottom: 0px; 
-    margin: 0px; 
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
     padding-top: 0px
 }
 body {
     font-family: sans-serif;
-    padding-right: 0px; 
-    padding-left: 0px; 
+    padding-right: 0px;
+    padding-left: 0px;
     padding-bottom: 0px;
     margin: 0px; padding-top: 0px;
     background-color: #fff;
@@ -17,8 +17,8 @@ body {
     position: absolute;
     z-index: 5;
     padding: 0px 100px 0px 0px;
-    margin:0 0.5%;	
-    margin-bottom:1em;	
+    margin:0 0.5%;
+    margin-bottom:1em;
     margin-top: 1em;
     background-color: #fff;
 }
@@ -33,9 +33,9 @@ body {
 
 .content {
     padding: 12px;
-    margin-top: 1px;  
+    margin-top: 1px;
     margin-bottom:0px;
-    margin-left: 15px; 
+    margin-left: 15px;
     margin-right: 15px;
     border-color: #000000;
     border-top: 0px;
@@ -44,13 +44,13 @@ body {
     border-right: 1px;
 }
 
-A { 
-    text-decoration: none; 
-    color:#225 
+A {
+    text-decoration: none;
+    color:#225
 }
-A:hover { 
-    text-decoration: underline; 
-    color:#222 
+A:hover {
+    text-decoration: underline;
+    color:#222
 }
 
 #title {
@@ -143,7 +143,7 @@ select {
     border-color:#7d95b5;
     background-color:#7d95b5;
 }
-		    
+
 .deco4 {
     z-index:4;
     border:0px;
@@ -151,10 +151,10 @@ select {
     border-color:#d0d8e4;
     background-color:#d0d8e4;
 }
-		    
 
-table { 
-    border: 0px solid; 
+
+table {
+    border: 0px solid;
     background-color: #ffffff;
 }
 
@@ -165,7 +165,7 @@ table {
 }
 
 #matrix #actionth {
-    width: 1px; 
+    width: 1px;
     padding: 0em 1em 0em 1em;
 }
 
@@ -267,7 +267,7 @@ label .field {
     text-decoration: none;
 }
 
-#vlist li a:hover { 
+#vlist li a:hover {
     border-color: #227;
 }
 

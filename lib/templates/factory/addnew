@@ -13,13 +13,12 @@ table.
 
 <div id="addnew">
 <form method="post" action="<% $base %>/<% $classmetadata->{table} %>/do_edit/">
-    <fieldset>
+<fieldset>
 <legend>Add a new <% $classmetadata->{moniker} %></legend>
 % foreach my $col ( @{ $classmetadata->{columns} } ) {
 % next if $col eq "id";
-<label><span class="field"><% $classmetadata->{colnames}->{ $col } %></span>
-<% $classmetadata->{cgi}->{ $col }->as_XML %>
-</label>
+<label><span class="field"><% $classmetadata->{colnames}->{ $col } %></span></label>
+<% $classmetadata->{cgi}->{ $col }->as_XML %><br clear="left" />
 % }
 <input type="submit" name="create" value="create" />
 </fieldset>

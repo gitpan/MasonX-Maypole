@@ -12,8 +12,7 @@
 <legend>Search</legend>
 % foreach my $col ( @{ $classmetadata->{columns} } ) {
 % next if $col eq "id";
-<label>
-<span class="field"><% $classmetadata->{colnames}->{ $col } %></span>
+<label><span class="field"><% $classmetadata->{colnames}->{ $col } %></span></label>
 <%perl>
     my $element = $classmetadata->{cgi}->{ $col };
 
@@ -23,8 +22,7 @@
                             HTML::Element->new( "option", value => " " ) );
     }
 </%perl>
-<% $element->as_XML %>
-</label>
+<% $element->as_XML %><br clear="left" />
 % }
 <input type="submit" name="search" value="search" />
 </fieldset>
