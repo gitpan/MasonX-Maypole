@@ -20,11 +20,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.02_04
+Version 0.02_05
 
 =cut
 
-our $VERSION = '0.2_04';
+our $VERSION = '0.2_05';
 
 =head1 SYNOPSIS
 
@@ -239,25 +239,22 @@ sub send_output {
 
     # if there was an error, there may already be a report in the output slot,
     # so send it via Apache::MVC
-    $self->SUPER::send_output if $self->output;
+    return $self->SUPER::send_output if $self->output;
 
     my $m = eval { $self->mason_ah->prepare_request( $self->ar ) };
 
     if ( my $error = $@ )
     {
-        $self->output( $error );
-        $self->SUPER::send_output;
-
         # In here, $m is actually a status code, but Maypole::handler isn't
         # interested so no point in returning it.
-        return;
+        $self->output( $error );
+        return $self->SUPER::send_output;
     }
 
     unless ( ref $m )
     {
         $self->output( "prepare_request returned this: [$m]\n instead of a Mason request object" );
-        $self->SUPER::send_output;
-        return;
+        return $self->SUPER::send_output;
     }
 
     $self->ar->content_type(
@@ -279,9 +276,9 @@ sub send_output {
 
 =item get_template_root
 
-Concatenates template_root and uri_base from the Maypole config.
+Returns C<template_root> from the config.
 
-This is a variation from L<Apache::MVC|Apache::MVC>, which concatenates
+This varies from L<Apache::MVC|Apache::MVC>, which concatenates
 document_root and location from the Apache request server config.
 
 =cut

@@ -7,7 +7,7 @@
 </%doc>
 
 <div id="search">
-<form method="get" action="<% $base %>/<% $classmetadata->{moniker} %>/search/">
+<form method="get" action="<% $base %>/<% $classmetadata->{table} %>/search/">
 <fieldset>
 <legend>Search</legend>
 % foreach my $col ( @{ $classmetadata->{columns} } ) {

@@ -30,7 +30,3 @@ for some.
 <& button, obj => $item, action => "edit" &>
 <& button, obj => $item, action => "delete" &>
 </td>
-
-<%once>
-    use URI;
-</%once>

@@ -34,7 +34,7 @@ sub template {
 
         my %vars = $self->vars( $maypole );
 
-        warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug;
+        warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 1;
 
         foreach my $varname ( keys %vars )
         {
@@ -67,13 +67,21 @@ templates) to the browser.
 =cut
 
 sub error {
-    my ( $self, $maypole ) = @_;
+    my ( $self, $maypole, $error ) = @_;
 
-    warn $maypole->error;
+    # Some parts of Maypole will store the error in the Maypole request 'error' slot
+    # (e.g. see above). Others pass the error as an argument (e.g. Maypole::handler_guts)
+    my %errors;
+    foreach my $an_error ( $error, $maypole->error )
+    {
+        next unless $an_error;
+        warn $an_error;
+        $errors{ $an_error }++;
+    }
 
     $maypole->content_type( 'text/plain' );
 
-    $maypole->output( $maypole->error );
+    $maypole->output( join( "\n", keys %errors ) );
 
     $maypole->send_output;
 
