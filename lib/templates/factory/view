@@ -10,42 +10,8 @@ C<objects> and displays the object's properties in a table.
 </%doc>
 
 % foreach my $item ( @$objects ) {
-% my $string = $item->stringify_column;
-<div id="title"><% $item->$string %></div>
-<& navbar &>
-<table class="view">
-    <tr>
-        <td class="field"><% $classmetadata->{colnames}->{ $string } %></td>
-        <td><% $item->$string %></td>
-    </tr>
 
-% foreach my $col ( @{ $classmetadata->{columns} } ) {
-% next if $col eq "id" or $col eq $string;
-% next unless $item->$col;
-
-<%doc>
-
-=for doc
-
-It gets the displayable form of a column's name from the hash returned
-from the C<column_names> method:
-
-</%doc>
-
-<tr>
-<td class="field"><% $classmetadata->{colnames}->{ $col } %></td>
-<td>
-
-% if ( $col eq "url" && $item->url ) {
-<a href="<% $item->url %>"><% $item->url %></a>
-% } else {
-<& maybe_link_view, object => $item->$col &>
-% }
-
-</td>
-</tr>
-% }
-</table>
+<& view_item, item => $item &>
 
 <%doc>
 
@@ -57,6 +23,8 @@ C<related_accessors> method - see L<Model/related_accessors> - to return
 a list of has-many accessors. Next it calls each of those accessors, and
 displays the results in a table.
 
+=cut
+
 </%doc>
 
 <br /><a href="<% $base %>/<% $item->table %>/list">Back to listing</a>
@@ -65,4 +33,6 @@ displays the results in a table.
 
 <& button, obj => $item, action => "edit" &>
 <& button, obj => $item, action => "delete" &>
+
 % }
+

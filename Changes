@@ -2,6 +2,10 @@ Revision history for MasonX-Maypole
 
 Change log
 ==========
+0.213  Thu Dec 9, 01:15:00 2004
+    - applied patch to view template, splitting part of it out into the
+        new view_item template
+
 0.212  Wed Dec 8, 13:15:00 2004
     - applied patch to button template, to check if action is_public
 

@@ -26,6 +26,8 @@ lib/templates/factory/pager
 lib/templates/factory/search_form
 lib/templates/factory/title
 lib/templates/factory/view
+lib/templates/factory/view_item
 lib/templates/factory/view_related
 lib/templates/maypole.css
+doc/maypole_api.txt
 t/pod.t

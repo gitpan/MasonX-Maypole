@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: MasonX-Maypole
-version: 0.212
+version: 0.213
 author:
   - David Baird <cpan@riverside-cms.co.uk>
 abstract: |-
@@ -15,10 +15,10 @@ requires:
 provides:
   MasonX::Maypole:
     file: lib/MasonX/Maypole.pm
-    version: 0.212
+    version: 0.213
   MasonX::Maypole::ApacheHandler:
     file: lib/MasonX/Maypole.pm
-    version: 0.212
+    version: 0.213
   MasonX::Maypole::View:
     file: lib/MasonX/Maypole/View.pm
 generated_by: Module::Build version 0.26
