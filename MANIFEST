@@ -16,3 +16,4 @@ templates/factory/navbar
 templates/factory/pager
 templates/factory/search_form
 templates/factory/view
+maypole.css

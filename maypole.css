@@ -1,0 +1,128 @@
+/* 01 - typography */
+
+body {
+	background-color: #def;
+	color: #333;
+	font-family: "Trebuchet MS", "Bitstream Vera Sans", verdana, lucida, arial, helvetica, sans-serif;
+}
+
+th {
+	font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6	{
+	font-family: Myriad, "Trebuchet MS", verdana, lucida, arial, helvetica, sans-serif;
+	font-weight: normal;
+}
+
+body, div, p, th, td, li, dd, dt {
+	font-size: small;
+}
+
+a:link, a:visited {
+	font-weight : bold;
+	text-decoration : none;
+	color: #c30;
+	background: transparent;
+}
+
+a:hover {
+	font-weight : bold;
+	text-decoration : underline;
+	background: transparent;
+}
+
+a:active {
+	font-weight : bold;
+	text-decoration : none;
+	color: #526968;
+	background: transparent;
+}
+
+
+
+/* 02 -  navbar   */
+
+div#MPNavContainer {
+    clear: right;
+}
+
+ul#MPNav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul#MPNav li {
+    border: 1px solid gray;
+    padding: 3px 5px;
+    margin: 0 10px 3px 0;
+    background-color: #ddd;
+    float: left;
+}
+
+ul#MPNav li.Active {
+    border-bottom: none;
+    background-color: transparent;
+}
+
+
+
+/* 03 - misc         */
+
+.MPFormError {
+    color: red;
+    font-weight: bold;
+}
+
+div#MPSearchContainer,
+div#MPListContainer,
+div#MPAddNewContainer,
+div#MPPagerContainer {
+    float: left;
+}
+
+
+
+/* 04 - tables */
+
+table.Maypole {
+    background-color: white;
+    border: 1px solid black;
+}
+
+table.Maypole td {
+    padding: 2px 5px;
+    margin: 2px;
+    border: 1px solid silver;
+    background: #eee;
+    vertical-align: top;
+}
+
+table.Maypole th {
+    padding: 2px 5px;
+    margin: 2px;
+    border: 1px solid black;
+    background-color: #ccc;
+}
+
+
+
+/* 05 - forms */
+
+table.Maypole input, table.Maypole textarea {
+    background-color: #eef;
+    border: 1px solid maroon;
+}
+
+form.MPButton {
+    display: inline;
+}
+
+form.MPButton input, form input.MPButton {
+    background-color: #ffc;
+    border: 1px solid gray;
+    padding: 2px 5px;
+    margin: 2px;
+}
+

@@ -1,4 +1,4 @@
-MasonX/Maypole version 0.01
+MasonX/Maypole version 0.02
 ===========================
 
 Provide a Mason frontend to Maypole.
@@ -6,7 +6,7 @@ Provide a Mason frontend to Maypole.
 This module removes most of the 'view' processing from the Maypole request
 cycle, leaving all that to Mason. 
 
-VERSION 0.01 initial release
+VERSION 0.02 fix POD typos, add maypole.css
 
 INSTALLATION
 

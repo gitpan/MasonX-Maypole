@@ -7,7 +7,7 @@ use base 'Maypole';
 use Maypole::Constants;
 use HTML::Mason::Request;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
@@ -15,10 +15,11 @@ MasonX::Maypole - provide a Mason frontend to Maypole
 
 =head1 SYNOPSIS
 
-Your in your Maypole driver class:
+In your Maypole driver class:
 
     package BeerDB;
     use base 'MasonX::Maypole';
+    BeerDB->setup( 'dbi:mysql:beerdb' );
     BeerDB->config->{ view } = 'Maypole::View::Base';
 
     # ... rest of BeerDB driver configuration
@@ -70,34 +71,40 @@ cycle, leaving all that to Mason.
 
 =head2 Templates
 
-The templates provided are XHTMLized, Mason-ized versions of the standard
-Maypole factory templates. A basic CSS file is included.
-
-The C<Maypole::View::TT> way of working is to inject the template variables
-into the namespace of each template. For Mason users, this would be similar to
-defining the variables as request globals. Instead, the template variables are
-retrieved by the root autohandler and placed in the %ARGS hash. This means
-that the template vars have to be passed around manually between components.
+The templates provided are (not quite) XHTMLized, Mason-ized versions of the
+standard Maypole factory templates. A basic CSS file is included.
 
 The C<link> template has been renamed C<mplink> because you may already have a
 utility component called C<link> in a shared component root. Well, at any rate,
 I do.
 
-All templates are placed in the same directory, since there is no difference
-in Mason between a template and a macro. They're all components. 
+=over 4
 
-=cut
+=item template variables
+
+The L<Maypole::View::TT> way of working is to inject the template variables
+into the namespace of each template. For Mason users, this would be similar to
+defining the variables as request globals. Instead, for simplicity, in the setup
+shown above the template variables are retrieved by the root autohandler and
+placed in the %ARGS hash. This means that the template vars have to be passed
+around manually between components.
 
 =item template paths
 
-The Mason configuration shown gives a variation on the template search path
+The Mason configuration shown above gives a variation on the template search path
 behaviour used in the standard Maypole setup. If a table-specific template -
-C</path/to/beerdb/<table>/<template>> exists, that will be used. Otherwise, a
-database-specific template C</path/to/beerdb/<template>> will be used, if it
+C</path/to/beerdb/[table]/[template]> exists, that will be used. Otherwise, a
+database-specific template C</path/to/beerdb/[template]> will be used, if it
 exists. Finally, the generic factory template in
 C</path/to/maypole/factory/templates> is used. You are free to place them
 anywhere else you prefer, and to add more search paths if appropriate (or
 remove them). 
+
+All templates are placed in the same directory, since there is no difference
+in Mason between a template and a macro. They're all components. But really
+that's up to you.
+
+=back
 
 =cut
 
@@ -114,9 +121,9 @@ removed (and is delegated to Mason).
 
 Returns the Maypole request object.
 
-=over 4
+You will not normally need to call this directly - see the C<vars> method. 
 
-=head3 Note
+NOTE
 
 For requests to unknown tables or actions, this method currently removes the
 C<base_url> portion of the path and sets the template slot of the Maypole
@@ -129,8 +136,6 @@ work for the setup described above.
 
 So don't rely on this behaviour in future releases, it may change if someone
 can explain to me how this stuff should really work. 
-
-=back
 
 =cut
 
@@ -191,8 +196,7 @@ sub prepare_request {
 
 =item vars
 
-A bit of sugar to wrap the call to prepare_request and extract the template
-variables in a single call.
+Calls C<prepare_request> and extracts and returns the template variables.
 
 =cut
 
@@ -212,9 +216,10 @@ Used by C<parse_location> to extract things from the URL.
 
 This implements a URL structure. If you prefer a different structure, override
 this method in your Maypole driver. You will also need to edit the C<mplink>
-factory template. See L<Maypole::Request>.
+factory template and various other bits (mostly form action parameters) in
+other templates. See L<Maypole::Request>.
 
-The structure here is C<[uri_base]/[table]/[action]/[arg].html> or
+The structure used here is C<[uri_base]/[table]/[action]/[arg].html> or
 C<[uri_base]/[table]/[action].html>. Typically C<arg> will be an integer ID.
 
 =cut
@@ -283,7 +288,8 @@ sub parse_location {
         $self->{params}{$key} = '' unless defined $value;
     }
     
-    # Mason doesn't differentiate between URL args and POSTed content
+    # Mason doesn't differentiate between URL args and POSTed content.
+    # Query parameters can be accessed directly in the Mason components. 
     $self->{query}  = {}; # { $self->{ar}->args };
 }
 
@@ -300,6 +306,10 @@ sub parse_location {
 Please report all bugs via the CPAN Request Tracker at
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=MasonX-Maypole>.
 
+=head1 TODO
+
+Complete XHTMLization of templates. 
+
 =head1 COPYRIGHT AND LICENSE
 
 Copyright 2004 by David Baird.
@@ -310,6 +320,8 @@ it under the same terms as Perl itself.
 =head1 AUTHOR
 
 David Baird, C<cpan@riverside-cms.co.uk>
+
+Most of the code comes from L<Maypole> and L<Apache::MVC>, by Simon Cozens.
 
 =head1 SEE ALSO
 
