@@ -1,0 +1,44 @@
+<%doc>
+
+=head1 edit
+
+This is the edit page. It edits the passed-in object, by displaying a
+form similar to L<add_new> but with the current values filled in.
+
+=cut
+
+</%doc>
+<%args>
+    $objects
+    $base
+    $classmetadata
+    $errors => undef
+</%args>
+
+% foreach my $item ( @$objects ) {
+%   my $string = $item->stringify_column || die "No stringify column for $item";
+<h2><% $classmetadata->{ moniker } %>: <& maybe_link_view, %ARGS, item => $item->get( $string ) &></h2>
+
+<form action="/<% $base %>/<% $item->table %>/do_edit/<% $item->id %>.html" method="post">
+
+<table class="Maypole">
+
+% foreach my $col ( @{ $classmetadata->{ columns } } ) {
+%   next if $col eq 'id';
+<tr>
+<th><% $classmetadata->{ colnames }->{ $col } %></th>
+<td><% $item->to_field( $col )->as_HTML %></td>
+</tr>
+% if ( $errors->{ $col } ) {
+<tr class="MPFormError">
+<th>Error</th>
+<td><% $errors->{ $col } %></td>
+</tr>
+% }
+% }
+<tr><td></td><td><input class="MPButton" type="submit" name="edit" value="save" /></td></tr>
+</table>
+% }
+
+
+</form>

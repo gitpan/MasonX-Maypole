@@ -1,0 +1,57 @@
+<%args>
+    @objects
+    $classmetadata
+    $search => undef
+    $pager => undef
+    $order => ''
+    $o2 => ''
+</%args>
+
+%if ( $search ) {
+<h2>Search results</h2>
+% } else {
+<h2>Listing of all <% $classmetadata->{ plural } %></h2>
+% }
+
+<div id="MPSearchContainer"><& search_form, %ARGS &></div>
+
+<div id="MPListContainer">
+
+<table class="Maypole">
+<tr class="MPListHeader">
+% foreach my $col ( @{ $classmetadata->{ columns } } ) {
+% next if $col eq 'id';
+<th>\
+<%perl>
+    my $additional = '?order=' . $col;
+    $additional .= '&page=' . $pager->{ current_page } if $pager;
+    $additional .= '&o2=desc';
+</%perl>\
+% if ( $col eq $order && $o2 ne 'desc' ) { # so much nicer in Mason
+<& mplink, table      => $classmetadata->{ table },
+           command    => 'list', 
+           additional => $additional, 
+           label      => $classmetadata->{ colnames }->{ $col },
+           &>\
+% } else {
+<% $classmetadata->{ colnames }->{ $col } %>\
+% }
+</th>
+% }
+
+% # this for the edit/delete buttons
+<th colspan="2"></th>
+</tr>
+
+% foreach my $item ( @objects ) {
+<tr><& display_line, %ARGS, item => $item &></tr>
+% }
+</table>
+
+</div>
+
+<div id="MPPagerContainer"><& pager,  %ARGS &></div>
+<div id="MPAddNewContainer"><& addnew, %ARGS &></div>
+
+</div>
+

@@ -1,0 +1,40 @@
+<%once>
+    use HTML::Element;
+</%once>
+<%args>
+    $base
+    $classmetadata
+</%args>
+
+<h3>Search</h3>
+
+<form method="post" action="/<% $base %>/<%$classmetadata->{ moniker } %>/search.html">
+
+<input type="hidden" name="action" value="create" />
+<input type="hidden" name="class"  value="<% $classmetadata->{ name } %>" />
+
+<table class="Maypole">
+
+% foreach my $col ( @ { $classmetadata->{ columns } } ) {
+% next if $col eq 'id';
+<tr> 
+<th><% $classmetadata->{ colnames }->{ $col } %></th>
+<td>\
+<%perl> 
+my $element = $classmetadata->{ cgi }->{ $col };
+if ( $element->{ tag } eq 'select' ) {
+    $element = $element->unshift_content( HTML::Element->new( 'option',
+                                                              value => ' ',
+                                                              ) );
+}
+chomp( my $h = $element->as_HTML );
+</%perl>
+<% $h %></td>
+</tr>
+% }
+
+<tr><th></th><td><input class="MPButton" type="submit" name="search" value="search" /></td></tr>
+
+</table>
+
+</form>

@@ -1,0 +1,42 @@
+<%doc>
+
+=head1 addnew
+
+This is the interface to adding a new instance of an object. (or a new
+row in the database, if you want to look at it that way). It displays a
+form containing a list of HTML components for each of the columns in the
+table.
+
+=cut
+
+</%doc>
+<%args>
+    $base
+    $classmetadata
+</%args>
+
+<h3>Add a new <% $classmetadata->{ moniker } %></h3>
+
+<form method="post" action="/<% $base %>/<% $classmetadata->{ table } %>/do_edit.html">
+
+<input type="hidden" name="action" value="create" />
+
+
+<table class="Maypole">
+
+% foreach my $col ( @{ $classmetadata->{ columns } } ) {
+% next if $col eq "id";
+<tr>
+<th><% $classmetadata->{ colnames }->{ $col } %></th>
+<td><% $classmetadata->{ cgi }->{ $col }->as_HTML %></td>
+</tr>
+% }
+
+<tr><th></th><td><input class="MPButton" type="submit" name="create" value="create" /></td></tr>
+
+</table>
+
+
+
+</form>
+

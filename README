@@ -1,0 +1,34 @@
+MasonX/Maypole version 0.01
+===========================
+
+Provide a Mason frontend to Maypole.
+
+This module removes most of the 'view' processing from the Maypole request
+cycle, leaving all that to Mason. 
+
+VERSION 0.01 initial release
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+Mason and Maypole
+
+COPYRIGHT AND LICENCE
+
+Copyright 2004 by David Baird.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+Most of the code in this module is taken from Apache::MVC and Maypole.pm,
+by Simon Cozens. 
+
+

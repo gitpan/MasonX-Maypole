@@ -1,0 +1,57 @@
+<%doc>
+
+=for doc
+
+The C<view> template takes some objects (usually just one) from
+C<objects> and displays the object's properties in a table. 
+
+It gets the displayable form of a column's name from the hash returned
+from the C<column_names> method.
+
+The C<view> template also displays a list of other objects related to the first
+one via C<has_many> style relationships; this is done by calling the
+C<related_accessors> method - see L<Model/related_accessors> - to return
+a list of has-many accessors. Next it calls each of those accessors, and
+displays the results in a table.
+
+=cut
+
+</%doc>
+<%args>
+    $objects
+    $classmetadata
+</%args>
+
+% foreach my $item ( @$objects ) {
+
+%   my $string = $item->stringify_column || die "No stringify column for $item";
+% # <h2><% $item->get( $string ) %></h2>
+<h2><% $classmetadata->{ moniker } %>: <& maybe_link_view, %ARGS, item => $item->get( $string ) &></h2>
+
+<table class="Maypole">
+
+<tr>
+<th><% $classmetadata->{ colnames }->{ $string } %></th>
+<th><% $item->{ $string } %></th>
+</tr>
+
+% foreach my $col ( @ { $classmetadata->{ columns } } ) {
+%    next if $col eq 'id' or $col eq $string;
+<tr>
+<th><% $classmetadata->{ colnames }->{ $col } %></th>
+<td><& maybe_link_view, %ARGS, item => $item->get( $col ) &></td>
+</tr>
+
+% }
+
+<tr><td colspan="2"><& view_related, %ARGS, object => $item &></td></tr>
+
+<tr>
+<td colspan="2"><& button, %ARGS, item => $item, action=> 'edit'   &>
+                <& button, %ARGS, item => $item, action=> 'delete' &></td>
+<tr>
+
+</table>
+
+% }
+

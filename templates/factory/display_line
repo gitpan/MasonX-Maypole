@@ -1,0 +1,31 @@
+<%doc>
+
+=head2 display_line
+
+C<display_line> is used in the list template to display a row from the
+database, by iterating over the columns and displaying the data for each
+column. It misses out the C<id> column by default.
+
+=cut
+
+</%doc>
+
+% foreach my $col ( @{ $classmetadata->{ columns } } ) {
+% next if $col eq 'id';
+<td>\
+% if ( $col eq $item->stringify_column ) {
+<& maybe_link_view, %ARGS, item => $item &>\
+% } else {
+<& maybe_link_view, %ARGS, item => $item->$col &>\
+% }
+</td>
+% }
+
+<td><& button, %ARGS, action => 'edit'   &></td>
+<td><& button, %ARGS, action => 'delete' &></td>
+
+
+<%args>
+    $item
+    $classmetadata
+</%args>
