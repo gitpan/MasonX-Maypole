@@ -20,11 +20,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.02
+Version 0.02_04
 
 =cut
 
-our $VERSION = '0.2_03';
+our $VERSION = '0.2_04';
 
 =head1 SYNOPSIS
 
@@ -237,8 +237,6 @@ phase to generate and send output.
 sub send_output {
     my ( $self ) = @_;
 
-    warn "config: " . YAML::Dump( $self->config );
-
     # if there was an error, there may already be a report in the output slot,
     # so send it via Apache::MVC
     $self->SUPER::send_output if $self->output;
@@ -269,12 +267,9 @@ sub send_output {
     );
 
     # add dynamic comp root for table queries
-    if ( $self->model_class )
+    if ( $self->table )
     {
-        my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
-
-        warn -d $table_comp_root ? warn "adding temp comp root: $table_comp_root" :
-                                   warn "not adding temp comp root: $table_comp_root";
+        my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->table );
         $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
     }
 
