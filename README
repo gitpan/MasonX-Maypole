@@ -5,6 +5,10 @@ Provides a Mason frontend and view to Maypole 2.
 Change log
 ==========
 
+0.2_03 Tue Nov 16, 00:10:00 2004
+    - fixed bug in link template
+    - added dhandler back - it's still needed, though simplified
+
 0.2_02 Mon Nov 15, 23:20:00 2004
     - fixed search path - table-specific paths were not being searched by
         components other than the main request component

@@ -24,7 +24,7 @@ Version 0.02
 
 =cut
 
-our $VERSION = '0.2_02';
+our $VERSION = '0.2_03';
 
 =head1 SYNOPSIS
 
@@ -272,6 +272,9 @@ sub send_output {
     if ( $self->model_class )
     {
         my $table_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
+
+        warn -d $table_comp_root ? warn "adding temp comp root: $table_comp_root" :
+                                   warn "not adding temp comp root: $table_comp_root";
         $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
     }
 

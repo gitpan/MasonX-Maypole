@@ -12,4 +12,5 @@ catenating the base URL, table, command, and any arguments.
     $additional
     $label
 </%args>
-<a href="<% $base %>/<% $table %>/<% $command %>/<% $additional %>"><% $label %></a>
+% $additional &&= "/$additional";
+<a href="<% $base %>/<% $table %>/<% $command %><% $additional %>"><% $label %></a>

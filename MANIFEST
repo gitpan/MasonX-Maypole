@@ -9,6 +9,7 @@ lib/templates/beer/addnew
 lib/templates/factory/addnew
 lib/templates/factory/autohandler
 lib/templates/factory/button
+lib/templates/factory/dhandler
 lib/templates/factory/display_line
 lib/templates/factory/edit
 lib/templates/factory/footer

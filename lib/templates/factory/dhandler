@@ -1,0 +1,13 @@
+<%doc>
+
+=head1 dhandler
+
+This component emulates part of the search path behaviour of Maypole, by
+looking for a table-specific template first. If no template is found, then the
+other component roots will be searched.
+
+=cut
+
+</%doc>
+
+<& $request->template, %ARGS &>
