@@ -24,7 +24,7 @@ Version 0.02_05
 
 =cut
 
-our $VERSION = '0.2_05';
+our $VERSION = '0.21';
 
 =head1 SYNOPSIS
 
@@ -92,15 +92,8 @@ will not get a 'not permitted' error.
 
 This distribution includes Masonized versions of the standard Maypole templates,
 plus a dhandler and autohandler. The autohandler simply takes care of adding
-a header and footer to every page.
-
-The dhandler is responsible for implementing
-part of the Maypole template lookup behaviour. It first looks for a template
-specific to the table being queried by the request. If no such template is
-found, it defers the lookup to Mason's component search path. This is set
-in C<init>. The result is that the lookup follows the same
-sequence as described in the Maypole documentation (table > site > factory).
-You can add extra component roots if you need them.
+a header and footer to every page, while the dhandler loads the template
+specified in the Maypole request object.
 
 So if you set the factory comp_root to point at the Maypole factory templates,
 the thing should Just Work right out of the box.
