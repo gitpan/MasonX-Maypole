@@ -11,7 +11,7 @@ accessible, with a link to the list page for each one.
 <div id="MPNavContainer">
 <ul id="MPNav">
 % foreach my $table ( @{ $config->{ display_tables } } ) {
-% my $css_active = ' id="Active"' if $table eq $request->{ table };
+% my $css_active = ' class="Active"' if $table eq $request->{ table };
 <li<% $css_active %>><& mplink, table      => $table,
                                 base       => $base,
                                 config     => $config,

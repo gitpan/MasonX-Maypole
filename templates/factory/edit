@@ -27,7 +27,7 @@ form similar to L<add_new> but with the current values filled in.
 %   next if $col eq 'id';
 <tr>
 <th><% $classmetadata->{ colnames }->{ $col } %></th>
-<td><% $item->to_field( $col )->as_HTML %></td>
+<td><% $item->to_field( $col )->as_XML %></td>
 </tr>
 % if ( $errors->{ $col } ) {
 <tr class="MPFormError">

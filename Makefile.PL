@@ -11,3 +11,4 @@ WriteMakefile(
       (ABSTRACT_FROM => 'Maypole.pm', # retrieve abstract from module
        AUTHOR     => 'David R. Baird <cpan@riverside-cms.co.uk>') : ()),
 );
+ 

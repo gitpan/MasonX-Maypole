@@ -27,7 +27,7 @@ if ( $element->{ tag } eq 'select' ) {
                                                               value => ' ',
                                                               ) );
 }
-chomp( my $h = $element->as_HTML );
+chomp( my $h = $element->as_XML );
 </%perl>
 <% $h %></td>
 </tr>

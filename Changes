@@ -1,4 +1,8 @@
 Revision history for Perl extension MasonX::Maypole.
+ 
+0.03  Fri Aug  6 09:45:00 2004
+    - minor additions to maypole.css
+    - completed XHTMLisation of templates
 
 0.02  Sun Aug  1 23:29:58 2004
     - added missing CSS file, fixed typos in POD

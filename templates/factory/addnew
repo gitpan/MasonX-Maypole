@@ -28,7 +28,7 @@ table.
 % next if $col eq "id";
 <tr>
 <th><% $classmetadata->{ colnames }->{ $col } %></th>
-<td><% $classmetadata->{ cgi }->{ $col }->as_HTML %></td>
+<td><% $classmetadata->{ cgi }->{ $col }->as_XML %></td>
 </tr>
 % }
 
