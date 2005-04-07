@@ -4,7 +4,7 @@
 <head>
     <title><% $the_title %></title>
     <meta http-equiv="Content-Type" content="text/html; charset=<% $request->document_encoding %>"/>
-    <link title="Maypole" href="<% $base %>/maypole.css" type="text/css" rel="stylesheet" />
+    <link title="Maypole" href="<% $base %>/css/maypole.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <div class="content">

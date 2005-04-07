@@ -17,7 +17,7 @@ if there is no C<name> method or other stringification method defined.
 <%args>
     $object
 </%args>
-% if ( $object->isa( 'Maypole::Model::Base' ) { 
+% if ( UNIVERSAL::isa( $object, 'Maypole::Model::Base' ) ) { 
 <& link, table      => $object->table,
          command    => "view",
          additional => $object->id,

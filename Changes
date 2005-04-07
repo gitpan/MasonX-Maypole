@@ -3,6 +3,11 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.220  Web Apr  7, 03:20:00 2005
+    - fixed a couple of bugs in maybe_link_view template
+    - edited header template to place maypole.css in /css
+    - updated example httpd.conf and BeerDB.pm
+
 0.219  Sun Feb 20, 18:03:00 2005
     - changed send_output() to add a component root based on the model moniker, rather 
         than the table name. In most cases these will be identical. 

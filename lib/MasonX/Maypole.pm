@@ -3,6 +3,7 @@ use warnings;
 use strict;
 use Carp;
 
+# just checking versions
 use Maypole 2;
 use Apache::MVC 2;
 
@@ -21,11 +22,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.0219
+Version 0.220
 
 =cut
 
-our $VERSION = '0.219';
+our $VERSION = '0.220';
 
 =head1 SYNOPSIS
 
@@ -35,7 +36,6 @@ our $VERSION = '0.219';
 
     use Class::DBI::Loader::Relationship;
 
-    use MasonX::Maypole 0.2;
     use base 'MasonX::Maypole';
 
     BeerDB->setup( 'dbi:mysql:beerdb' );
@@ -273,7 +273,7 @@ sub send_output {
     #    $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
     #}
     
-    warn "Comp roots: \n" . YAML::Dump( $m->interp->comp_root ) if $self->debug;
+    warn "Comp roots: \n  " . join( "\n  ", map { @$_ } @{ $m->interp->comp_root } ) if $self->debug;
 
     # now generate output
     $m->exec;
