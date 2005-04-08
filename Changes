@@ -3,7 +3,11 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
-0.220  Web Apr  7, 03:20:00 2005
+0.221  Fri Apr  8, 15:00:00 2005
+    - slight modification to frontpage template to remove extra title
+    - added information about beerdb demo at http://beerdb.riverside-cms.co.uk
+
+0.220 Thur Apr  7, 03:20:00 2005
     - fixed a couple of bugs in maybe_link_view template
     - edited header template to place maypole.css in /css
     - updated example httpd.conf and BeerDB.pm

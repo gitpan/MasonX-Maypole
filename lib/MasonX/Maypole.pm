@@ -22,11 +22,11 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =head1 VERSION
 
-Version 0.220
+Version 0.221
 
 =cut
 
-our $VERSION = '0.220';
+our $VERSION = 0.221;
 
 =head1 SYNOPSIS
 
@@ -75,6 +75,9 @@ A frontend and view for Maypole 2, using Mason.
 
 Example C<BeerDB.pm> and a C<httpd.conf> VirtualHost setup are included in 
 the C</doc> directory of the distribution.
+
+A working example of the BeerDB application is at C<http://beerdb.riverside-cms.co.uk>, 
+including the C<BeerDB.pm> and C<httpd.conf> used for that site.
 
 =head1 CONFIGURING MASON
 
