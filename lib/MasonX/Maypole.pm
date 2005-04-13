@@ -20,13 +20,9 @@ use Maypole::Constants;
 
 MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
-=head1 VERSION
-
-Version 0.221
-
 =cut
 
-our $VERSION = 0.221;
+our $VERSION = 0.222;
 
 =head1 SYNOPSIS
 
@@ -276,7 +272,7 @@ sub send_output {
     #    $m->prefix_comp_root( "table=>$table_comp_root" ) if -d $table_comp_root;
     #}
     
-    warn "Comp roots: \n  " . join( "\n  ", map { @$_ } @{ $m->interp->comp_root } ) if $self->debug;
+    warn "Comp roots:\n" . join( "\n", map { "@$_" } @{ $m->interp->comp_root } ) if $self->debug;
 
     # now generate output
     $m->exec;

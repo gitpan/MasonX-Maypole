@@ -3,6 +3,11 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.222  Wed Apr 13, 13:30:00 2005
+    - added init anf flags sections to maypole.css to prevent Mason from 
+        wrapping the css content, and to ensure the file is served with 
+        the correct content type.
+
 0.221  Fri Apr  8, 15:00:00 2005
     - slight modification to frontpage template to remove extra title
     - added information about beerdb demo at http://beerdb.riverside-cms.co.uk

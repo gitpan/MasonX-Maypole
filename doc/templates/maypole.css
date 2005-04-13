@@ -14,7 +14,7 @@ body {
     background-color: #fff;
 }
 #frontpage_list {
-    position: absolute;
+    /* position: absolute; */
     z-index: 5;
     padding: 0px 100px 0px 0px;
     margin:0 0.5%;
@@ -368,5 +368,15 @@ white-space: nowrap;
     text-decoration: none;
 }
 
+#footer {
+    font-size: 80%;
+}
 
-
+/*
+<%init>
+    $r->content_type( 'text/css' );
+</%init>
+<%flags>
+    inherit => undef
+</%flags>
+*/
