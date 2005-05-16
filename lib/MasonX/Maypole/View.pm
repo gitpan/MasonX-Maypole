@@ -35,16 +35,16 @@ sub template {
         my %vars = $self->vars( $maypole );
 
         warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 2;
+        
+        my $undef;
 
         foreach my $varname ( keys %vars )
         {
             my $export = qualify_to_ref( $varname, $pkg );
             *$export = \$vars{ $varname };
 
-            # XXX need to check how this plays in mod_perl2. It may be
-            # unnecessary anyway.
-            $maypole->ar->register_cleanup( sub { undef *$export } );
-
+            $maypole->ar->register_cleanup( sub { undef *$export; 1 } );
+            
             # no strict 'refs';
             # *{"$pkg\::$varname"} = \$vars{ $varname };
         }
@@ -71,17 +71,25 @@ sub error {
     
     # Some parts of Maypole will store the error in the Maypole request 'error' slot
     # (e.g. see above). Others pass the error as an argument (e.g. Maypole::handler_guts)
-    my %errors;
-    foreach my $an_error ( $error, $maypole->error )
-    {
-        next unless $an_error;
-        warn $an_error;
-        $errors{ $an_error }++;
-    }
+    my @errors = $error, $maypole->error;
+    
+    # this is _still_ unlikely to give a clue as to where the error actually occurred
+    Devel::StackTrace->require if $maypole->debug;
+    die $@ if $@;
+    
+    #unshift @errors, Carp::longmess( 'Maypole error caught by ' . __PACKAGE__ . ':' )
+    #    if $maypole->debug;
+    unshift @errors, 'Maypole error caught by ' . __PACKAGE__ . ':', 
+                     Devel::StackTrace->new->as_string 
+                        if $maypole->debug;
+        
+    my $errors = join "\n", @errors;
+    
+    print STDERR $errors if $maypole->debug;
 
     $maypole->content_type( 'text/plain' );
 
-    $maypole->output( join( "\n", keys %errors ) );
+    $maypole->output( $errors );
 
     $maypole->send_output;
 

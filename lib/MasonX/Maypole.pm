@@ -10,7 +10,7 @@ use Apache::MVC 2;
 use base 'Apache::MVC';
 
 Maypole::Config->mk_accessors( 'masonx' );
-__PACKAGE__->config->masonx( {} );
+#__PACKAGE__->config->masonx( {} );
 
 __PACKAGE__->mk_classdata( 'mason_ah' );
 
@@ -22,7 +22,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.222;
+our $VERSION = 0.223;
 
 =head1 SYNOPSIS
 
@@ -192,31 +192,6 @@ sub parse_args {
     $self->{params} = $args;
     $self->{query}  = $args;
 }
-
-=item parse_location
-
-This method is B<not> implemented here, but in L<Apache::MVC|Apache::MVC>.
-However, the method there assumes your Maypole app is configured in its
-own C<Location> directive in the Apache config file. Here's a method that
-instead uses the C<base_url> Maypole config parameter. Put it in your Maypole
-class if you need it:
-
-    sub parse_location {
-        my ( $self ) = @_;
-
-        my $uri = $self->ar->uri;
-
-        # Apache::MVC uses $self->ar->location here
-        my $base = $self->config->uri_base;
-
-        ( my $path = $uri ) =~ s/^($base)?\///;
-
-        $self->path( $path );
-
-        $self->parse_path;
-        $self->parse_args;
-    }
-
 
 =item send_output
 

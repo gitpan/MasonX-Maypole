@@ -3,6 +3,14 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.223  Mon May 16, 17:30:00 2005
+    - it seems that Apache's register_cleanup method should not return undef. 
+        Who knew? Anyway, now returning 1 in the register_cleanup call in 
+        MasonX::Maypole::View::template(). This fixes an obscure bug where 
+        template vars were not getting cleaned up at the end of each request. 
+        It also fixes an annoying warning about using undefined variables, but 
+        without any file name or line number to find the damned thing. 
+
 0.222  Wed Apr 13, 13:30:00 2005
     - added init anf flags sections to maypole.css to prevent Mason from 
         wrapping the css content, and to ensure the file is served with 
