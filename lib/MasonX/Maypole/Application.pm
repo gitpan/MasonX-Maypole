@@ -1,4 +1,4 @@
-package Maypole::Application;
+package MasonX::Maypole::Application;
 
 use strict;
 use warnings;

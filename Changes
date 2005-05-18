@@ -3,6 +3,9 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.31 Wed May 18, 19:46:00 2005
+    - fixed the package declaration in MasonX::Maypole::Application
+
 0.3  Mon May 16, 17:35:00 2005
     - Fixed important bug where MasonX::Maypole::send_output() wasn't transferring 
         headers_out from the Maypole request to the Apache request
