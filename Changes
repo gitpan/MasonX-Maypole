@@ -3,6 +3,13 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.3  Mon May 16, 17:35:00 2005
+    - Fixed important bug where MasonX::Maypole::send_output() wasn't transferring 
+        headers_out from the Maypole request to the Apache request
+    - Ugh. The bug in 0.223 isn't fixed, just the warning.
+    - Removed extra warnings from View.pm
+    - Added MasonX::Maypole::Application until MP::App gets patched.
+
 0.223  Mon May 16, 17:30:00 2005
     - it seems that Apache's register_cleanup method should not return undef. 
         Who knew? Anyway, now returning 1 in the register_cleanup call in 

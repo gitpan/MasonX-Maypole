@@ -36,13 +36,15 @@ sub template {
 
         warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 2;
         
-        my $undef;
-
+        warn "BUG IN " . __PACKAGE__ . " - template vars not getting cleaned up"
+            if $maypole->debug > 1;
+        
         foreach my $varname ( keys %vars )
         {
             my $export = qualify_to_ref( $varname, $pkg );
             *$export = \$vars{ $varname };
 
+            # this does _not_ seem to be cleaning up
             $maypole->ar->register_cleanup( sub { undef *$export; 1 } );
             
             # no strict 'refs';
@@ -73,12 +75,6 @@ sub error {
     # (e.g. see above). Others pass the error as an argument (e.g. Maypole::handler_guts)
     my @errors = $error, $maypole->error;
     
-    # this is _still_ unlikely to give a clue as to where the error actually occurred
-    Devel::StackTrace->require if $maypole->debug;
-    die $@ if $@;
-    
-    #unshift @errors, Carp::longmess( 'Maypole error caught by ' . __PACKAGE__ . ':' )
-    #    if $maypole->debug;
     unshift @errors, 'Maypole error caught by ' . __PACKAGE__ . ':', 
                      Devel::StackTrace->new->as_string 
                         if $maypole->debug;

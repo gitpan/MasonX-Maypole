@@ -3,18 +3,11 @@ use warnings;
 use strict;
 use Carp;
 
-# just checking versions
-use Maypole 2;
-use Apache::MVC 2;
-
 use base 'Apache::MVC';
 
 Maypole::Config->mk_accessors( 'masonx' );
-#__PACKAGE__->config->masonx( {} );
 
 __PACKAGE__->mk_classdata( 'mason_ah' );
-
-use Maypole::Constants;
 
 =head1 NAME
 
@@ -22,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.223;
+our $VERSION = 0.3;
 
 =head1 SYNOPSIS
 
@@ -32,40 +25,33 @@ our $VERSION = 0.223;
 
     use Class::DBI::Loader::Relationship;
 
-    use base 'MasonX::Maypole';
+    use MasonX::Maypole::Application qw( -Debug2 MasonX AutoUntaint );
 
-    BeerDB->setup( 'dbi:mysql:beerdb' );
+    BeerDB->setup( 'dbi:mysql:beerdb', 'username', 'password' );
 
     BeerDB->config->{view}           = 'MasonX::Maypole::View';
-    BeerDB->config->{template_root}  = '/var/www/beerdb';
-    BeerDB->config->{uri_base}       = '/beerdb';
+    BeerDB->config->{template_root}  = '/home/beerdb/www/www/htdocs';
+    BeerDB->config->{uri_base}       = '/';
     BeerDB->config->{rows_per_page}  = 10;
     BeerDB->config->{display_tables} = [ qw( beer brewery pub style ) ];
+    BeerDB->config->{application_name} = 'The Beer Database';
 
     BeerDB->config->masonx->{comp_root}  = [ [ factory => '/var/www/maypole/factory' ] ];
-    BeerDB->config->masonx->{data_dir}   = '/path/to/mason/data_dir';
-    BeerDB->config->masonx->{in_package} = 'My::Mason::App';
+    BeerDB->config->masonx->{data_dir}   = '/home/beerdb/www/www/mdata';
+    BeerDB->config->masonx->{in_package} = 'BeerDB::TestApp';
 
-    BeerDB::Brewery->untaint_columns( printable => [qw/name notes url/] );
-
-    BeerDB::Style->untaint_columns( printable => [qw/name notes/] );
-
-    BeerDB::Beer->untaint_columns(
-        printable => [qw/abv name price notes/],
-        integer => [qw/style brewery score/],
-        date => [ qw/date/],
-    );
+    BeerDB->auto_untaint;
 
     BeerDB->config->{loader}->relationship($_) for (
         "a brewery produces beers",
         "a style defines beers",
-        "a pub has beers on handpumps");
+        "a pub has beers on handpumps" );
 
     1;
 
 =head1 DESCRIPTION
 
-A frontend and view for Maypole 2, using Mason.
+A frontend and view for Maypole, using Mason.
 
 =head1 EXAMPLES
 
@@ -77,7 +63,7 @@ including the C<BeerDB.pm> and C<httpd.conf> used for that site.
 
 =head1 CONFIGURING MASON
 
-Set any parameters for the Mason ApacheHandler in C<My::Maypole::App->config->{masonx}>.
+Set any parameters for the Mason ApacheHandler in C<<BeerDB->config->{masonx}>>.
 This is where to tell Maypole/Mason where the factory templates are stored.
 
 Note that the user the server runs as must have permission to read the files in the
@@ -86,6 +72,13 @@ templates must be readable and executable (i.e. openable). If Mason can't read
 these templates, you may get a cryptic 'file doesn't exist' error, but you
 will not get a 'not permitted' error.
 
+=head1 Maypole::Application
+
+L<Maypole::Application|Maypole::Application> needs to be patched before it will work 
+with MasonX::Maypole. The patch is available at C<http://beerdb.riverside-cms.co.uk>, 
+or you can use L<MasonX::Maypole::Application|MasonX::Maypole::Application> (included with 
+this distribution), which is just L<Maypole::Application|Maypole::Application> with the 
+patch.
 
 =head1 TEMPLATES
 
@@ -229,6 +222,15 @@ sub send_output {
         ? $self->content_type . "; charset=" . $self->document_encoding
         : $self->content_type
     );
+    
+    foreach ( $self->headers_out->field_names ) 
+    {
+        next if /^Content-(Type|Length)/;
+        $self->{ar}->headers_out->set( $_ => $self->headers_out->get( $_ ) );
+    }
+    
+    # I think Mason will do this:
+    #$self->{ar}->send_http_header;
 
     # add dynamic comp root for table queries
     # Changed to using model_class instead of table in 0.219 ( see Maypole::View::Base::paths() 
