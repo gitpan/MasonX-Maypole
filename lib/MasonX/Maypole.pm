@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.32;
+our $VERSION = 0.33;
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ our $VERSION = 0.32;
 
     use Class::DBI::Loader::Relationship;
 
-    use MasonX::Maypole::Application qw( -Debug2 MasonX AutoUntaint );
+    use Maypole::Application qw( -Debug2 MasonX AutoUntaint );
 
     BeerDB->setup( 'dbi:mysql:beerdb', 'username', 'password' );
 
@@ -75,10 +75,8 @@ will not get a 'not permitted' error.
 =head1 Maypole::Application
 
 L<Maypole::Application|Maypole::Application> needs to be patched before it will work 
-with MasonX::Maypole. The patch is available at C<http://beerdb.riverside-cms.co.uk>, 
-or you can use L<MasonX::Maypole::Application|MasonX::Maypole::Application> (included with 
-this distribution), which is just L<Maypole::Application|Maypole::Application> with the 
-patch applied.
+with MasonX::Maypole. You can download a patched copy from C<http://beerdb.riverside-cms.co.uk>, 
+until the required updates are included in the version distributed with L<Maypole>.
 
 =head1 TEMPLATES
 
