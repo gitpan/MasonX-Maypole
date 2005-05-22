@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.31;
+our $VERSION = 0.32;
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,6 @@ our $VERSION = 0.31;
 
     BeerDB->setup( 'dbi:mysql:beerdb', 'username', 'password' );
 
-    BeerDB->config->{view}           = 'MasonX::Maypole::View';
     BeerDB->config->{template_root}  = '/home/beerdb/www/www/htdocs';
     BeerDB->config->{uri_base}       = '/';
     BeerDB->config->{rows_per_page}  = 10;
@@ -43,9 +42,10 @@ our $VERSION = 0.31;
     BeerDB->auto_untaint;
 
     BeerDB->config->{loader}->relationship($_) for (
-        "a brewery produces beers",
-        "a style defines beers",
-        "a pub has beers on handpumps" );
+        'a brewery produces beers',
+        'a style defines beers',
+        'a pub has beers on handpumps',
+        );
 
     1;
 
@@ -78,7 +78,7 @@ L<Maypole::Application|Maypole::Application> needs to be patched before it will 
 with MasonX::Maypole. The patch is available at C<http://beerdb.riverside-cms.co.uk>, 
 or you can use L<MasonX::Maypole::Application|MasonX::Maypole::Application> (included with 
 this distribution), which is just L<Maypole::Application|Maypole::Application> with the 
-patch.
+patch applied.
 
 =head1 TEMPLATES
 
@@ -88,7 +88,8 @@ a header and footer to every page, while the dhandler loads the template
 specified in the Maypole request object.
 
 So if you set the factory comp_root to point at the Maypole factory templates,
-the thing should Just Work right out of the box.
+the thing should Just Work right out of the box. Except for maypole.css, which 
+you will need to copy to the right place on your server. 
 
 =head1 METHODS
 
@@ -120,6 +121,8 @@ sub init {
     $mason_cfg->{resolver_class} = 'MasonX::Resolver::ExtendedCompRoot';
 
     $class->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
+    
+    $class->config->view || $class->config->view( 'MasonX::Maypole::View' );
 
     $class->SUPER::init;
 }
@@ -167,6 +170,8 @@ CROOT:  foreach my $index ( 0 .. $#$comp_roots )
     push @$comp_roots, [ factory => $factory->[1] || File::Spec->catdir( $template_root, 'factory' ) ];
 
     $class->config->masonx->{comp_root} = $comp_roots;
+    
+    #warn "Base comp roots: " . YAML::Dump( $comp_roots ) if $class->debug > 2;
 }
 
 =item parse_args

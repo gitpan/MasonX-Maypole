@@ -26,7 +26,6 @@ sub import {
     $frontend ||= 'CGI::Maypole';
     
     $frontend->require or die "Loading $frontend frontend failed: $@";
-    push @ISA, $frontend;
 
     my $autosetup=0;
     my @plugin_modules;
@@ -54,7 +53,7 @@ sub import {
         }
     }
     no strict 'refs';
-    push @{"${caller}::ISA"}, @plugin_modules, $class;
+    push @{"${caller}::ISA"}, @plugin_modules, $frontend;
     $caller->config(Maypole::Config->new);
     $caller->config->masonx({}) if $masonx;
     $caller->setup() if $autosetup;
