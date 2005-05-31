@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.33;
+our $VERSION = 0.34;
 
 =head1 SYNOPSIS
 

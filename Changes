@@ -3,6 +3,9 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.34 Tues May 31, 20:15:00 2005
+    - moved maypole.css to correct directory
+
 0.33 Sun May 22, 23:45:00 2005
     - removed MasonX::Maypole::Application and replaced it with a link 
         to beerdb.riverside-cms.co.uk, where a patched Maypole::Application
