@@ -81,7 +81,7 @@ sub error {
         
     my $errors = join "\n", @errors;
     
-    print STDERR $errors if $maypole->debug;
+    #print STDERR $errors if $maypole->debug;
 
     $maypole->content_type( 'text/plain' );
 

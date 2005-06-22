@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.34;
+our $VERSION = '0.4_1';
 
 =head1 SYNOPSIS
 
@@ -52,6 +52,10 @@ our $VERSION = 0.34;
 =head1 DESCRIPTION
 
 A frontend and view for Maypole, using Mason.
+
+=head1 DEVELOPER RELEASE
+
+This version supports HTML::Mason 1.29_1, and should not be used with earlier releases. 
 
 =head1 EXAMPLES
 
@@ -115,8 +119,9 @@ sub init {
     $mason_cfg->{in_package}   ||= 'HTML::Mason::Commands';
 
     # this provides dynamic table-name component roots
-    $mason_cfg->{request_class}  = 'MasonX::Request::ExtendedCompRoot';
-    $mason_cfg->{resolver_class} = 'MasonX::Resolver::ExtendedCompRoot';
+    $mason_cfg->{dynamic_comp_root} = 1;
+    #$mason_cfg->{request_class}  = 'MasonX::Request::ExtendedCompRoot';
+    #$mason_cfg->{resolver_class} = 'MasonX::Resolver::ExtendedCompRoot';
 
     $class->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
     
@@ -169,7 +174,7 @@ CROOT:  foreach my $index ( 0 .. $#$comp_roots )
 
     $class->config->masonx->{comp_root} = $comp_roots;
     
-    #warn "Base comp roots: " . YAML::Dump( $comp_roots ) if $class->debug > 2;
+    #use Data::Dumper; warn "Base comp roots: " . Dumper( $comp_roots );
 }
 
 =item parse_args
@@ -199,10 +204,13 @@ phase to generate and send output.
 
 sub send_output {
     my ( $self ) = @_;
-
+    
     # if there was an error, there may already be a report in the output slot,
     # so send it via Apache::MVC
-    return $self->SUPER::send_output if $self->output;
+    if ( $self->output )
+    {
+        return $self->SUPER::send_output if $self->output;
+    }
 
     my $m = eval { $self->mason_ah->prepare_request( $self->ar ) };
 
@@ -234,6 +242,8 @@ sub send_output {
     
     # I think Mason will do this:
     #$self->{ar}->send_http_header;
+    
+    my @default_comp_roots = @{ $m->interp->comp_root };
 
     # add dynamic comp root for table queries
     # Changed to using model_class instead of table in 0.219 ( see Maypole::View::Base::paths() 
@@ -243,7 +253,13 @@ sub send_output {
         my $model_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
         # Even with this ugliness, there might be potential for non-unique prefixes, if a site was 
         # running multiple Maypole sub-apps all using the same Mason datadir...
-        $m->prefix_comp_root( 'MAYPOLE_MODEL_' . $self->model_class->moniker . "=>$model_comp_root" ) if -d $model_comp_root;
+        #$m->prefix_comp_root( 'MAYPOLE_MODEL_' . $self->model_class->moniker . "=>$model_comp_root" ) if -d $model_comp_root;
+        
+        # often this path will not exist
+        $m->interp->comp_root( [ [ 'MAYPOLE_MODEL_' . $self->model_class->moniker => $model_comp_root ],
+                                 @default_comp_roots,
+                                 ]
+                               ) if -d $model_comp_root;
     }
     
     #if ( $self->table )
@@ -256,6 +272,8 @@ sub send_output {
 
     # now generate output
     $m->exec;
+    
+    $m->interp->comp_root( [ @default_comp_roots ] );
 }
 
 =item get_template_root
@@ -286,6 +304,20 @@ sub get_template_root { $_[0]->config->template_root }
 
         return $args;
     }
+}
+
+=item get_request
+
+Replaces C<Apache::MVC::get_request>, using C<Apache::Request::instance()> instead 
+of C<Apache::Request::new()> to obtain the APR object. Calling C<new> means Mason 
+and Maypole have different APR objects, and the Mason one doesn't have any POST 
+data.
+
+=cut
+
+sub get_request {
+    my ( $self, $r ) = @_;
+    $self->{ar} = Apache::Request->instance($r); 
 }
 
 =back

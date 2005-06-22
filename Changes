@@ -3,6 +3,10 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.4_1 Thur Jun 23, 00:30:00 2005
+    - added support for HTML::Mason 1.29_1 (and broke support 
+        for all previous releases)
+
 0.34 Tues May 31, 20:15:00 2005
     - moved maypole.css to correct directory
 
