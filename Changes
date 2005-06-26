@@ -3,6 +3,14 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.421 Sun  Jun 26, 13:30:00 2005
+    - fixed syntax error in send_output()
+
+0.42  Fri  Jun 24, 10:00:00 2005
+    - now supports pre- and post- 1.26 HTML::Mason
+    - changed the label for model comp roots in send_output()
+    - send_output() now returns a status code (although Maypole doesn't check it)
+
 0.4_1 Thur Jun 23, 00:30:00 2005
     - added support for HTML::Mason 1.29_1 (and broke support 
         for all previous releases)
