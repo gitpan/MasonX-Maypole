@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.421;
+our $VERSION = 0.422;
 
 =head1 SYNOPSIS
 
@@ -247,22 +247,26 @@ sub send_output {
     
     my @default_comp_roots = @{ $m->interp->comp_root };
 
-    my $model_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
-    
     # Add a dynamic comp root for table queries, if the path exists (often it won't).
     # See Maypole::View::Base::paths() - maybe this stuff should go in a paths() method.
-    if ( $self->model_class and -d $model_comp_root )
+    if ( $self->model_class )
     {
-        my $label = $self->model_class;
-        $label =~ s/:+/_/g;  
+    
+        my $model_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
         
-        if ( $HTML::Mason::VERSION > 1.2899 )
+        if ( -d $model_comp_root )
         {
-            $m->interp->comp_root( [ [ $label => $model_comp_root ], @default_comp_roots ] );
-        }
-        else
-        {
-            $m->prefix_comp_root( "${label}=>$model_comp_root" );
+            my $label = $self->model_class;
+            $label =~ s/:+/_/g;  
+            
+            if ( $HTML::Mason::VERSION > 1.2899 )
+            {
+                $m->interp->comp_root( [ [ $label => $model_comp_root ], @default_comp_roots ] );
+            }
+            else
+            {
+                $m->prefix_comp_root( "${label}=>$model_comp_root" );
+            }
         }
     }
     

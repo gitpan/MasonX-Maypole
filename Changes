@@ -3,6 +3,9 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.422 Sun  Jun 26, 13:40:00 2005
+    - um, fixed syntax error in send_output()
+
 0.421 Sun  Jun 26, 13:30:00 2005
     - fixed syntax error in send_output()
 
