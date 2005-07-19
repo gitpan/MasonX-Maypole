@@ -15,7 +15,7 @@ MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
 
 =cut
 
-our $VERSION = 0.422;
+our $VERSION = 0.423;
 
 =head1 SYNOPSIS
 
@@ -115,7 +115,7 @@ sub init {
     $mason_cfg->{in_package}   ||= 'HTML::Mason::Commands';
 
     # this provides dynamic table-name component roots
-    if ( $HTML::Mason::VERSION > 1.2899 )
+    if ( $HTML::Mason::VERSION =~ /^1\.29/ or $HTML::Mason::VERSION > 1.2899 )
     {
         $mason_cfg->{dynamic_comp_root} = 1;
     }
