@@ -3,7 +3,7 @@ use warnings;
 use strict;
 
 use Maypole::Constants;
-
+use Memoize;
 use Symbol 'qualify_to_ref';
 
 use base 'Maypole::View::Base';
@@ -26,70 +26,47 @@ Loads the Maypole template vars into Mason components' namespace.
 
 =cut
 
-sub template {
-    my ( $self, $maypole ) = @_;
+sub template 
+{
+    my ( $self, $r ) = @_;
     
-    eval {
-        my $pkg = $maypole->config->masonx->{in_package};
+    my $pkg = $r->config->masonx->{in_package};
 
-        my %vars = $self->vars( $maypole );
+    my %vars = $self->vars( $r );
 
-        warn "got template vars: " . YAML::Dump( \%vars ) if $maypole->debug > 2;
-        
-        warn "BUG IN " . __PACKAGE__ . " - template vars not getting cleaned up"
-            if $maypole->debug > 1;
-        
-        foreach my $varname ( keys %vars )
-        {
-            my $export = qualify_to_ref( $varname, $pkg );
-            *$export = \$vars{ $varname };
-
-            # this does _not_ seem to be cleaning up
-            $maypole->ar->register_cleanup( sub { undef *$export; 1 } );
-            
-            # no strict 'refs';
-            # *{"$pkg\::$varname"} = \$vars{ $varname };
-        }
-    };
-
-    if ( my $error = $@ )
+    warn __PACKAGE__ . " - template vars maybe not getting cleaned up" if $r->debug > 1;
+    
+    foreach my $varname ( keys %vars )
     {
-        $maypole->error( 'Error populating template vars: ' . $error );
-        return ERROR;
+        my $export = qualify_to_ref( $varname, $pkg );
+        *$export = \$vars{ $varname };
+
+        # this does _not_ seem to be cleaning up always?
+        $r->ar->register_cleanup( sub { undef *$export; 1 } );
     }
 
     return OK;
 }
 
-=item error
+=item paths
 
-Handles errors by sending a plain text error report (i.e. not through any
-templates) to the browser.
+Builds the list of component roots in the correct order for Mason to search:
+
+    table-specific      - if path exists
+    custom              - if path exists
+    template root
+    factory 
 
 =cut
 
-sub error {
-    my ( $self, $maypole, $error ) = @_;
+memoize( 'paths', NORMALIZER => sub { shift; shift->model_class || '__no_model__' } );
+
+# this returns config info, so should be in the controller
+sub paths 
+{
+    my ( $self, $r ) = @_;
     
-    # Some parts of Maypole will store the error in the Maypole request 'error' slot
-    # (e.g. see above). Others pass the error as an argument (e.g. Maypole::handler_guts)
-    my @errors = $error, $maypole->error;
-    
-    unshift @errors, 'Maypole error caught by ' . __PACKAGE__ . ':', 
-                     Devel::StackTrace->new->as_string 
-                        if $maypole->debug;
-        
-    my $errors = join "\n", @errors;
-    
-    #print STDERR $errors if $maypole->debug;
-
-    $maypole->content_type( 'text/plain' );
-
-    $maypole->output( $errors );
-
-    $maypole->send_output;
-
-    return ERROR;
+    return $r->_paths;
 }
 
 1;

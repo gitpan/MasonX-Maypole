@@ -3,6 +3,26 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.5 Fri Aug 12, 2005 23:55
+    - ** INCOMPATIBLE CHANGES **
+        - removed MasonX::Maypole::View::error() - calls to the view's error method 
+            will now be handled by Maypole::View::Base::error()
+        - do *not* set $config->masonx->{comp_root} - your setting will be ignored and 
+            over-written
+        - added a new (optional) factory_root slot to the config object
+        - removed MasonX::Maypole::set_mason_comp_roots()
+    
+    - requires HTML::Mason 1.30 - for dynamic comp roots
+    - requires Maypole 2.10     - for Maypole::Application support
+    
+    - management of dynamic component roots has changed to use the new Mason capability
+    - added a dependency on Memoize
+    - simplified error handling - by removing it. If something wants to 
+        die, it just dies. Maypole sorts out catching exceptions, somehow.
+    - added MasonX::Maypole::View::paths(), which overrides Maypole::View::Base::paths. 
+        This method builds the list of component roots for each request. In fact, it 
+        wraps the new MasonX::Maypole::_paths() method. 
+
 0.423 Tues Jul 19, 2005 2:30
     - added pod-coverage.t
 

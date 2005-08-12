@@ -9,10 +9,10 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/MasonX/Maypole.pm',
     requires => {
         'Test::More' => 0,
-        'Maypole' => 2,
-        'HTML::Mason' => 1,
+        'Maypole' => 2.10,      # for MP::Application fixes
+        'HTML::Mason' => 1.30,  # for dynamic component root
         'Symbol' => 0,
-        'MasonX::Request::ExtendedCompRoot' => 0.03,
+        'Memoize' => 0,
 
     },
     add_to_cleanup      => [ 'MasonX-Maypole-*' ],

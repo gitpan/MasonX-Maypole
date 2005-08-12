@@ -3,19 +3,21 @@ use warnings;
 use strict;
 use Carp;
 
+use HTML::Mason 1.30; # for dynamic comp roots
+use Maypole 2.10;     # for Maypole::Application support
+
+# need to get rid of this, and a couple of bits and pieces, to allow CGI mode
 use base 'Apache::MVC';
 
-Maypole::Config->mk_accessors( 'masonx' );
+our $VERSION = 0.5;
+
+Maypole::Config->mk_accessors( qw( masonx factory_root ) );
 
 __PACKAGE__->mk_classdata( 'mason_ah' );
 
 =head1 NAME
 
 MasonX::Maypole - use Mason as the frontend and view for Maypole version 2
-
-=cut
-
-our $VERSION = 0.423;
 
 =head1 SYNOPSIS
 
@@ -48,6 +50,11 @@ our $VERSION = 0.423;
         );
 
     1;
+
+=head1 ** API CHANGES **
+
+Version 0.5 contains major modifications, and changes to error handling. See 
+the Changes file for details.
 
 =head1 DESCRIPTION
 
@@ -104,79 +111,64 @@ Sets up the Mason ApacheHandler, including the search path behaviour.
 
 # This only gets called once. Mason's path searching mechanism replaces
 # get_template_root and Maypole::View::Base::paths.
-sub init {
-    my ( $class ) = @_;
+sub init 
+{
+    my ( $r ) = @_;
 
-    $class->set_mason_comp_roots;
-
-    my $mason_cfg = $class->config->masonx;
-
+    my $mason_cfg = $r->config->masonx;
+    
+    $mason_cfg->{comp_root} = [ $r->_paths ];
+    
     $mason_cfg->{decline_dirs} ||= 0;
     $mason_cfg->{in_package}   ||= 'HTML::Mason::Commands';
-
-    # this provides dynamic table-name component roots
-    if ( $HTML::Mason::VERSION =~ /^1\.29/ or $HTML::Mason::VERSION > 1.2899 )
-    {
-        $mason_cfg->{dynamic_comp_root} = 1;
-    }
-    else
-    {
-        $mason_cfg->{request_class}  = 'MasonX::Request::ExtendedCompRoot';
-        $mason_cfg->{resolver_class} = 'MasonX::Resolver::ExtendedCompRoot';
-    }
-
-    $class->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
+    $mason_cfg->{dynamic_comp_root} = 1;
     
-    $class->config->view || $class->config->view( 'MasonX::Maypole::View' );
-
-    $class->SUPER::init;
+    $r->mason_ah( MasonX::Maypole::ApacheHandler->new( %{ $mason_cfg } ) );
+    
+    $r->config->view || $r->config->view( 'MasonX::Maypole::View' );
+        
+    # set up the view object
+    $r->SUPER::init;
 }
 
-=item set_mason_comp_roots
+# MasonX::Maypole::View::path() wraps this
+sub _paths
+{
+    my ( $r ) = @_; # class during startup, object during requests
 
-The default search path for a component is:
-
-    /template_root/<table_moniker>/<component>  # if querying a table
-    /template_root/custom/<component>
-    /template_root/<component>
-    /factory/template/root/<component>
-
-where C</factory/template/root> defaults to C</template_root/factory>, but can
-be altered by providing a factory C<comp_root> to the masonx config as shown
-in the synopsis.
-
-You can provide extra component roots in the masonx config setup. For other
-modifications to the search path, make a subclass that overrides this method.
-
-=cut
-
-# note that the table-name search path is added to the front of this list at
-# the start of every request, in send_output
-sub set_mason_comp_roots {
-    my ( $class ) = @_;
-
-    my $template_root = $class->get_template_root;
-
-    my $comp_roots = $class->config->masonx->{comp_root} || [];
-
-    my $factory = [];
-
-CROOT:  foreach my $index ( 0 .. $#$comp_roots )
-    {
-        if ( $comp_roots->[ $index ][0] eq 'factory' )
-        {
-            $factory = delete $comp_roots->[ $index ];
-            last CROOT;
-        }
-    }
-
-    push @$comp_roots, [ custom  => File::Spec->catdir( $template_root, 'custom' ) ];
-    push @$comp_roots, [ maypole => $template_root ];
-    push @$comp_roots, [ factory => $factory->[1] || File::Spec->catdir( $template_root, 'factory' ) ];
-
-    $class->config->masonx->{comp_root} = $comp_roots;
+    my $root    = $r->config->template_root || $r->get_template_root;
+    my $factory = $r->config->factory_root; 
     
-    #use Data::Dumper; warn "Base comp roots: " . Dumper( $comp_roots );
+    $root = ref $root eq 'ARRAY' ? $root : [ $root ];
+    
+    my @paths;
+
+    foreach my $path ( @$root ) 
+    {
+        if ( ref $r ) # false during startup - calling model_class() is a fatal error
+        {
+            if ( my $model = $r->model_class )
+            {
+                my $model_path = File::Spec->catdir( $path, $model->moniker );
+                
+                $model =~ s/::/_/g;
+                
+                push @paths, [ $model, $model_path ] if -d $model_path;
+            }
+        }
+                
+        my $custom = File::Spec->catdir( $path, 'custom'  );
+        
+        push @paths, [ custom => $custom ] if -d $custom;
+        
+        push @paths, [ default => $path ];
+        
+        push @paths, [ factory => File::Spec->catdir( $path, 'factory' ) ] unless $factory;
+    }
+    
+    push @paths, [ factory => $factory ] if $factory;
+    
+    return @paths;
 }
 
 =item parse_args
@@ -186,14 +178,15 @@ Uses Mason to extract the request arguments from the request.
 =cut
 
 # override the method in Apache::MVC
-sub parse_args {
-    my ( $self ) = @_;
+sub parse_args 
+{
+    my ( $r ) = @_;
 
     # set and return request args in Mason request object
-    my $args = $self->mason_ah->request_args( $self->ar );
+    my $args = $r->mason_ah->request_args( $r->ar );
 
-    $self->{params} = $args;
-    $self->{query}  = $args;
+    $r->{params} = $args;
+    $r->{query}  = $args;
 }
 
 =item send_output
@@ -204,80 +197,53 @@ phase to generate and send output.
 
 =cut
 
-sub send_output {
-    my ( $self ) = @_;
+sub send_output 
+{
+    my ( $r ) = @_;
     
-    # if there was an error, there may already be a report in the output slot,
-    # so send it via Apache::MVC
-    if ( $self->output )
-    {
-        return $self->SUPER::send_output if $self->output;
-    }
+    #
+    # set up the Mason request object
+    #
+    
+    # if there was an error, there may already be a report in the output slot
+    die $r->output if $r->output;
 
-    my $m = eval { $self->mason_ah->prepare_request( $self->ar ) };
-
-    if ( my $error = $@ )
-    {
-        # In here, $m is actually a status code, but Maypole::handler isn't
-        # interested so no point in returning it.
-        $self->output( $error );
-        return $self->SUPER::send_output;
-    }
-
+    my $m = $r->mason_ah->prepare_request( $r->ar );
+    
     unless ( ref $m )
     {
-        $self->output( "prepare_request returned this: [$m]\n instead of a Mason request object" );
-        return $self->SUPER::send_output;
+        warn "prepare_request returned this: [$m] instead of a Mason request object";
+        return $m;
     }
-
-    $self->ar->content_type(
-          $self->content_type =~ m/^text/
-        ? $self->content_type . "; charset=" . $self->document_encoding
-        : $self->content_type
+    
+    #
+    # set headers (Mason will set content-length and call send_http_header)
+    #
+    $r->ar->content_type(
+          $r->content_type =~ m/^text/
+        ? $r->content_type . "; charset=" . $r->document_encoding
+        : $r->content_type
     );
     
-    foreach ( $self->headers_out->field_names ) 
+    foreach ( $r->headers_out->field_names ) 
     {
         next if /^Content-(Type|Length)/;
-        $self->{ar}->headers_out->set( $_ => $self->headers_out->get( $_ ) );
+        $r->{ar}->headers_out->set( $_ => $r->headers_out->get( $_ ) );
     }
     
-    # I think Mason will do this:
-    #$self->{ar}->send_http_header;
-    
-    my @default_comp_roots = @{ $m->interp->comp_root };
+    #
+    # set dynamic comp roots
+    #
+    $m->interp->comp_root( [ $r->view_object->paths( $r ) ] );
 
-    # Add a dynamic comp root for table queries, if the path exists (often it won't).
-    # See Maypole::View::Base::paths() - maybe this stuff should go in a paths() method.
-    if ( $self->model_class )
+    if ( $r->debug > 1 )
     {
-    
-        my $model_comp_root = File::Spec->catdir( $self->get_template_root, $self->model_class->moniker );
-        
-        if ( -d $model_comp_root )
-        {
-            my $label = $self->model_class;
-            $label =~ s/:+/_/g;  
-            
-            if ( $HTML::Mason::VERSION > 1.2899 )
-            {
-                $m->interp->comp_root( [ [ $label => $model_comp_root ], @default_comp_roots ] );
-            }
-            else
-            {
-                $m->prefix_comp_root( "${label}=>$model_comp_root" );
-            }
-        }
+        Data::Dumper->require or die "Failed to load Data::Dumper: $@";
+        warn "Comp roots: " . Data::Dumper::Dumper( $m->interp->comp_root );
     }
     
-    warn "Comp roots:\n" . join( "\n", map { "@$_" } @{ $m->interp->comp_root } ) if $self->debug;
-
     # now generate and send output
     my $status = $m->exec;
-    
-    # maybe saying local $m->interp->comp_root( [ [ $label => $model_comp_root ], @default_comp_roots ] )
-    # would work instead
-    $m->interp->comp_root( [ @default_comp_roots ] ) if $HTML::Mason::VERSION > 1.2899;
     
     # Maypole doesn't actually check this status, but for the sake of good form:
     return $status;
@@ -293,6 +259,22 @@ document_root and location from the Apache request server config.
 =cut
 
 sub get_template_root { $_[0]->config->template_root }
+
+=item get_request
+
+Replaces C<Apache::MVC::get_request>, using C<Apache::Request::instance()> instead 
+of C<Apache::Request::new()> to obtain the APR object. Calling C<new> means Mason 
+and Maypole have different APR objects, and the Mason one doesn't have any POST 
+data.
+
+=cut
+
+sub get_request 
+{
+    my ( $self, $r ) = @_;
+    
+    $self->{ar} = Apache::Request->instance( $r ); 
+}
 
 {
     # copied from MasonX::WebApp
@@ -311,20 +293,6 @@ sub get_template_root { $_[0]->config->template_root }
 
         return $args;
     }
-}
-
-=item get_request
-
-Replaces C<Apache::MVC::get_request>, using C<Apache::Request::instance()> instead 
-of C<Apache::Request::new()> to obtain the APR object. Calling C<new> means Mason 
-and Maypole have different APR objects, and the Mason one doesn't have any POST 
-data.
-
-=cut
-
-sub get_request {
-    my ( $self, $r ) = @_;
-    $self->{ar} = Apache::Request->instance($r); 
 }
 
 =back
