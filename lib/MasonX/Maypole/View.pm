@@ -59,7 +59,7 @@ Builds the list of component roots in the correct order for Mason to search:
 
 =cut
 
-memoize( 'paths', NORMALIZER => sub { shift; shift->model_class || '__no_model__' } );
+memoize( 'paths', NORMALIZER => sub { shift; my $r = shift; $r->model_class || ref $r } );
 
 # this returns config info, so should be in the controller
 sub paths 

@@ -3,6 +3,12 @@ Revision history for MasonX-Maypole
 Change log
 ==========
 
+0.51 Sat Sept 24, 2005 21:35
+    - fixed bug in memoize normalizer function in MasonX::Maypole::View - 
+        if running multiple apps, the memoized paths() method would return the same 
+        paths for non-model URLs in different apps, which was breaking Mason's 
+        dynamic component root system
+
 0.5 Fri Aug 12, 2005 23:55
     - ** INCOMPATIBLE CHANGES **
         - removed MasonX::Maypole::View::error() - calls to the view's error method 

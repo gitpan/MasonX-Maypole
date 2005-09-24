@@ -9,7 +9,7 @@ use Maypole 2.10;     # for Maypole::Application support
 # need to get rid of this, and a couple of bits and pieces, to allow CGI mode
 use base 'Apache::MVC';
 
-our $VERSION = 0.5;
+our $VERSION = 0.51;
 
 Maypole::Config->mk_accessors( qw( masonx factory_root ) );
 
@@ -163,7 +163,8 @@ sub _paths
         
         push @paths, [ default => $path ];
         
-        push @paths, [ factory => File::Spec->catdir( $path, 'factory' ) ] unless $factory;
+        my $this_factory = File::Spec->catdir( $path, 'factory' );
+        push @paths, [ factory => $this_factory ] if -d $this_factory;
     }
     
     push @paths, [ factory => $factory ] if $factory;
